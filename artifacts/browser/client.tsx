@@ -415,7 +415,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
            
           {/* Control mode indicator */}
           {metadata.isConnected && (
-            <div className="flex items-center justify-between px-4 py-2 bg-muted/20 border-b">
+            <div className="flex items-center justify-between px-4 py-2 bg-muted/20">
               <div className="flex items-center gap-3 text-sm">
                 {metadata.controlMode === 'user' ? (
                   <>
@@ -441,7 +441,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           )}
                    
           {/* Main browser display area */}
-          <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-inner border border-gray-200/50 m-4">
+          <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-inner border border-gray-200/50 m-4">
             {metadata.error ? (
               <div className="absolute inset-0 flex items-center justify-center bg-red-50 text-red-600">
                 <div className="text-center">
@@ -477,8 +477,8 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center p-6">
-                <div 
+              <div className="absolute inset-0 flex items-center justify-center p-6 rounded-lg">
+                <div
                   className="relative rounded-md overflow-hidden shadow-lg ring-1 ring-black/5 bg-white w-11/12 h-11/12 max-w-6xl max-h-5xl"
                   tabIndex={metadata.controlMode === 'user' ? 0 : -1}
                   onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
