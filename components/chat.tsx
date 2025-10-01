@@ -84,7 +84,14 @@ export function Chat({
             selectedVisibilityType: visibilityType,
             ...body,
           },
-        }) : undefined,
+        }) : ({ messages, id, body }) => ({
+          body: {
+            messages,
+            threadId: id,
+            resourceId: session.user.id,
+            ...body,
+          },
+        }),
     }),
     onData: (dataPart) => {
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
@@ -93,10 +100,17 @@ export function Chat({
       mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
     onError: (error) => {
+      console.error('Chat error:', error);
       if (error instanceof ChatSDKError) {
         toast({
           type: 'error',
           description: error.message,
+        });
+      } else {
+        // Handle other errors (like quota errors from Mastra)
+        toast({
+          type: 'error',
+          description: error?.message || 'An error occurred. Please try again.',
         });
       }
     },
@@ -246,13 +260,6 @@ export function Chat({
     resumeStream,
     setMessages,
   });
-   // Handler for benefit applications landing page
-   const handleBenefitApplicationsMessage = (messageText: string) => {
-    sendMessage({
-      role: 'user' as const,
-      parts: [{ type: 'text', text: messageText }],
-    });
-  };
 
   // Special UI for web automation agent - show landing page initially
   if (initialChatModel === 'web-automation-model' && messages.length === 0) {
@@ -268,11 +275,18 @@ export function Chat({
             session={session}
           />
           <BenefitApplicationsLanding
-            onSendMessage={handleBenefitApplicationsMessage}
+            input={input}
+            setInput={setInput}
             isReadonly={isReadonly}
             chatId={id}
             sendMessage={sendMessage}
             selectedVisibilityType={visibilityType}
+            status={status}
+            stop={stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            messages={messages}
+            setMessages={setMessages}
           />
         </div>
         <Artifact

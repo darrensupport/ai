@@ -31,7 +31,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
   initialize: async ({ documentId, setMetadata }) => {
     // Initialize with a unique session ID based on document ID
     const sessionId = `browser-${documentId}-${Date.now()}`;
-    
+
     setMetadata({
       sessionId,
       isConnected: false,

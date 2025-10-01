@@ -53,6 +53,39 @@ export async function getUser(email: string): Promise<Array<User>> {
   }
 }
 
+export async function getUserById({ id }: { id: string }): Promise<User | null> {
+  try {
+    const result = await db.select().from(user).where(eq(user.id, id));
+    return result[0] || null;
+  } catch (error) {
+    return null;
+  }
+}
+
+export async function ensureUserExists({ id, email }: { id: string; email?: string }): Promise<User> {
+  const existingUser = await getUserById({ id });
+  if (existingUser) {
+    return existingUser;
+  }
+
+  const userEmail = email || `guest-recovery-${Date.now()}`;
+  const password = generateHashedPassword(generateUUID());
+
+  try {
+    const result = await db.insert(user).values({
+      id,
+      email: userEmail,
+      password
+    }).returning();
+    return result[0];
+  } catch (error) {
+    throw new ChatSDKError(
+      'bad_request:database',
+      'Failed to create user',
+    );
+  }
+}
+
 export async function createUser(email: string, password: string) {
   const hashedPassword = generateHashedPassword(password);
 
@@ -240,6 +273,7 @@ async function getMastraThreadById({ id }: { id: string }) {
       title: thread.title || 'Web Automation',
       userId: thread.resourceId,
       visibility: 'public' as const,
+      mastraThreadId: thread.id,
     };
   } catch (error) {
     console.error('Failed to get Mastra thread by id:', error);
@@ -442,7 +476,9 @@ export async function saveDocument({
       })
       .returning();
   } catch (error) {
-    throw new ChatSDKError('bad_request:database', 'Failed to save document');
+    console.error('Database error saving document:', error);
+    console.error('Error details:', JSON.stringify(error, null, 2));
+    throw new ChatSDKError('bad_request:database', `Failed to save document: ${error instanceof Error ? error.message : String(error)}`);
   }
 }
 
