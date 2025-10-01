@@ -161,14 +161,14 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
     if (isVisible && !isConnected && !isConnecting) {
       connectToBrowserStream();
     }
-  }, [isVisible]);
+  }, [isVisible, isConnected, isConnecting, connectToBrowserStream]);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
       disconnectFromBrowserStream();
     };
-  }, []);
+  }, [disconnectFromBrowserStream]);
 
   if (!isVisible) {
     return null;
@@ -192,7 +192,7 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
                 onClick={disconnectFromBrowserStream}
                 className="text-red-600 hover:text-red-700"
               >
-                <MonitorX className="w-4 h-4 mr-1" />
+                <MonitorX className="size-4 mr-1" />
                 Disconnect
               </Button>
             ) : (
@@ -203,9 +203,9 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
                 disabled={isConnecting}
               >
                 {isConnecting ? (
-                  <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                  <Loader2 className="size-4 mr-1 animate-spin" />
                 ) : (
-                  <Monitor className="w-4 h-4 mr-1" />
+                  <Monitor className="size-4 mr-1" />
                 )}
                 {isConnecting ? 'Connecting...' : 'Connect'}
               </Button>
@@ -226,7 +226,7 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
           {error ? (
             <div className="absolute inset-0 flex items-center justify-center bg-red-50 text-red-600">
               <div className="text-center">
-                <MonitorX className="w-8 h-8 mx-auto mb-2" />
+                <MonitorX className="size-8 mx-auto mb-2" />
                 <p className="text-sm font-medium">Connection Error</p>
                 <p className="text-xs opacity-75">{error}</p>
                 <Button 
@@ -244,12 +244,12 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
               <div className="text-center">
                 {isConnecting ? (
                   <>
-                    <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+                    <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
                     <p className="text-sm">Connecting to browser...</p>
                   </>
                 ) : (
                   <>
-                    <Monitor className="w-8 h-8 mx-auto mb-2" />
+                    <Monitor className="size-8 mx-auto mb-2" />
                     <p className="text-sm">No browser connection</p>
                     <p className="text-xs opacity-75">Browser display will appear here during automation</p>
                   </>
@@ -262,7 +262,7 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
                 ref={canvasRef}
                 width={1920}
                 height={1080}
-                className="w-full h-full object-contain"
+                className="size-full object-contain"
                 style={{ 
                   imageRendering: 'auto',
                   background: '#ffffff'
@@ -276,7 +276,7 @@ export function BrowserPanel({ sessionId = 'default', isVisible, onToggle }: Bro
           <div className="mt-2 text-xs text-gray-500 flex justify-between">
             {/* <span>Session: {sessionId}</span> */}
             <span className="flex items-center gap-1">
-              <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+              <div className="size-2 bg-green-400 rounded-full animate-pulse" />
               Live
             </span>
           </div>

@@ -120,8 +120,7 @@ function composeEventHandlers<E extends React.SyntheticEvent<unknown>>(
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type AnyProps = Record<string, any>;
+type AnyProps = Record<string, any>; // Dynamic prop merging requires any type
 
 function AnimateIcon({
   asChild = false,
@@ -404,7 +403,7 @@ function AnimateIcon({
 
   const content = asChild ? (
     <Slot
-      ref={inViewRef}
+      ref={inViewRef as any}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onPointerDown={handlePointerDown}
@@ -415,7 +414,7 @@ function AnimateIcon({
     </Slot>
   ) : (
     <motion.span
-      ref={inViewRef}
+      ref={inViewRef as any}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       onPointerDown={handlePointerDown}

@@ -379,7 +379,7 @@ function PureStopButton({
   return (
     <Button
       data-testid="stop-button"
-      className="h-10 w-10 rounded-full text-white p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className="size-10 rounded-full text-white p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       onClick={(event) => {
         event.preventDefault();
         stop();
@@ -405,7 +405,7 @@ function PureSendButton({
   return (
     <Button
       data-testid="send-button"
-      className="h-10 w-10 rounded-full text-white p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className="size-10 rounded-full text-white p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       onClick={(event) => {
         event.preventDefault();
         submitForm();

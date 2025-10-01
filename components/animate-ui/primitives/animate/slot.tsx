@@ -16,8 +16,7 @@ type WithAsChild<Base extends object> =
   | (Base & { asChild?: false | undefined });
 
 type SlotProps<T extends HTMLElement = HTMLElement> = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  children?: any;
+  children?: any; // React children can be any type
 } & DOMMotionProps<T>;
 
 function mergeRefs<T>(
@@ -29,7 +28,7 @@ function mergeRefs<T>(
       if (typeof ref === 'function') {
         ref(node);
       } else {
-        (ref as React.RefObject<T | null>).current = node;
+        (ref as React.MutableRefObject<T | null>).current = node;
       }
     });
   };

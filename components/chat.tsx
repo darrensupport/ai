@@ -252,7 +252,7 @@ export function Chat({
         setBrowserArtifactDismissed(false);
       }
     }
-  }, [messages.length, browserArtifactDismissed]);
+  }, [messages, browserArtifactDismissed]);
 
   useAutoResume({
     autoResume,

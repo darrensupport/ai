@@ -9,6 +9,7 @@ import { MultimodalInput } from './multimodal-input';
 interface BenefitApplicationsLandingProps {
   input: string;
   setInput: Dispatch<SetStateAction<string>>;
+  isReadonly: boolean;
   chatId: string;
   sendMessage: UseChatHelpers<ChatMessage>['sendMessage'];
   selectedVisibilityType: VisibilityType;
@@ -23,6 +24,7 @@ interface BenefitApplicationsLandingProps {
 export function BenefitApplicationsLanding({
   input,
   setInput,
+  isReadonly,
   chatId,
   sendMessage,
   selectedVisibilityType,
