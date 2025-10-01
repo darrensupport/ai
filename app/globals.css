@@ -26,6 +26,7 @@
     :root {
         --background: 0 0% 100%;
         --foreground: 270 10% 3.9%;
+        --chat-background: 300 50% 94%;
         --card: 0 0% 100%;
         --card-foreground: 270 10% 3.9%;
         --popover: 0 0% 100%;
@@ -57,10 +58,12 @@
         --sidebar-accent-foreground: 270 75% 25%;
         --sidebar-border: 270 20% 91%;
         --sidebar-ring: 270 75% 45%;
+        --custom-purple: 320 45% 45%;
     }
     .dark {
         --background: 270 15% 3.9%;
         --foreground: 270 10% 98%;
+        --chat-background: 300 27% 5%;
         --card: 270 15% 3.9%;
         --card-foreground: 270 10% 98%;
         --popover: 270 15% 3.9%;
@@ -91,6 +94,7 @@
         --sidebar-accent-foreground: 270 10% 95%;
         --sidebar-border: 270 10% 15.9%;
         --sidebar-ring: 270 80% 70%;
+        --custom-purple: 320 50% 55%;
     }
 }
 

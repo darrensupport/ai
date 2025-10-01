@@ -31,7 +31,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
   initialize: async ({ documentId, setMetadata }) => {
     // Initialize with a unique session ID based on document ID
     const sessionId = `browser-${documentId}-${Date.now()}`;
-    
+
     setMetadata({
       sessionId,
       isConnected: false,
@@ -396,7 +396,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       return (
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
-            <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+            <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
             <p className="text-sm text-muted-foreground">Initializing browser artifact...</p>
           </div>
         </div>
@@ -408,14 +408,14 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           {/* Connection status indicator */}
           {metadata.isConnecting && (
             <div className="flex items-center justify-center py-2 text-sm text-muted-foreground bg-muted/30">
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="size-4 mr-2 animate-spin" />
               Connecting to browser...
             </div>
           )}
            
           {/* Control mode indicator */}
           {metadata.isConnected && (
-            <div className="flex items-center justify-between px-4 py-2 bg-muted/20 border-b">
+            <div className="flex items-center justify-between px-4 py-2 bg-muted/20">
               <div className="flex items-center gap-3 text-sm">
                 {metadata.controlMode === 'user' ? (
                   <>
@@ -441,7 +441,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           )}
                    
           {/* Main browser display area */}
-          <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg overflow-hidden shadow-inner border border-gray-200/50 m-4">
+          <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-inner border border-gray-200/50 m-4">
             {metadata.error ? (
               <div className="absolute inset-0 flex items-center justify-center bg-red-50 text-red-600">
                 <div className="text-center">
@@ -464,12 +464,12 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 <div className="text-center">
                   {metadata.isConnecting ? (
                     <>
-                      <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+                      <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
                       <p className="text-sm">Connecting to browser...</p>
                     </>
                   ) : (
                     <>
-                      <Monitor className="w-8 h-8 mx-auto mb-2" />
+                      <Monitor className="size-8 mx-auto mb-2" />
                       <p className="text-sm">No browser connection</p>
                       <p className="text-xs opacity-75">Browser display will appear here during automation</p>
                     </>
@@ -477,8 +477,8 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center p-6">
-                <div 
+              <div className="absolute inset-0 flex items-center justify-center p-6 rounded-lg">
+                <div
                   className="relative rounded-md overflow-hidden shadow-lg ring-1 ring-black/5 bg-white w-11/12 h-11/12 max-w-6xl max-h-5xl"
                   tabIndex={metadata.controlMode === 'user' ? 0 : -1}
                   onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
@@ -499,7 +499,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className="w-full h-full object-contain"
+                    className="size-full object-contain"
                     style={{ 
                       imageRendering: 'auto',
                       background: '#ffffff',
@@ -524,7 +524,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             <div className="px-4 pb-4 text-xs text-gray-500 flex justify-between">
               {/* <span>Session: {metadata.sessionId}</span> */}
               <span className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <div className="size-2 bg-green-400 rounded-full animate-pulse" />
                 Live
               </span>
             </div>

@@ -215,7 +215,7 @@ function PureMultimodalInput({
   return (
     <div className="relative w-full flex flex-col gap-4">
       <AnimatePresence>
-        {isHydrated && !isAtBottom && (
+        {isHydrated && !isAtBottom && messages.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -290,7 +290,7 @@ function PureMultimodalInput({
         value={input}
         onChange={handleInput}
         className={cx(
-          'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-purple-500 dark:focus:border-purple-400 focus:ring-2 focus:ring-purple-200 dark:focus:ring-purple-800 focus:outline-none transition-colors pb-10',
+          'min-h-[24px] max-h-[calc(75dvh)] overflow-hidden resize-none rounded-2xl !text-base border-2 border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:border-custom-purple dark:focus:border-custom-purple focus:ring-2 focus:ring-custom-purple/20 dark:focus:ring-custom-purple/30 focus:outline-none transition-colors pb-10',
           className,
         )}
         rows={2}
@@ -317,7 +317,7 @@ function PureMultimodalInput({
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
-        {status === 'submitted' ? (
+        {status === 'streaming' || status === 'submitted' ? (
           <StopButton stop={stop} setMessages={setMessages} />
         ) : (
           <SendButton
@@ -379,7 +379,7 @@ function PureStopButton({
   return (
     <Button
       data-testid="stop-button"
-      className="h-10 w-10 rounded-full text-white p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className="size-10 rounded-full text-white p-0 flex items-center justify-center bg-custom-purple hover:bg-custom-purple/90 dark:bg-custom-purple dark:hover:bg-custom-purple/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       onClick={(event) => {
         event.preventDefault();
         stop();
@@ -405,7 +405,7 @@ function PureSendButton({
   return (
     <Button
       data-testid="send-button"
-      className="h-10 w-10 rounded-full text-white p-0 flex items-center justify-center bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className="size-10 rounded-full text-white p-0 flex items-center justify-center bg-custom-purple hover:bg-custom-purple/90 dark:bg-custom-purple dark:hover:bg-custom-purple/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       onClick={(event) => {
         event.preventDefault();
         submitForm();

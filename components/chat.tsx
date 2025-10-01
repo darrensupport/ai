@@ -22,7 +22,6 @@ import { useAutoResume } from '@/hooks/use-auto-resume';
 import { ChatSDKError } from '@/lib/errors';
 import type { Attachment, ChatMessage } from '@/lib/types';
 import { useDataStream } from './data-stream-provider';
-import { BrowserPanel } from './browser-panel';
 import { BenefitApplicationsLanding } from './benefit-applications-landing';
 
 export function Chat({
@@ -51,8 +50,6 @@ export function Chat({
   const { setDataStream } = useDataStream();
 
   const [input, setInput] = useState<string>('');
-  const [browserPanelVisible, setBrowserPanelVisible] = useState<boolean>(false);
-  const [browserSessionId, setBrowserSessionId] = useState<string>(id);
   
 
   const {
@@ -69,10 +66,14 @@ export function Chat({
     experimental_throttle: 100,
     generateId: generateUUID,
     transport: new DefaultChatTransport({
-      api: '/api/chat',
+      api: initialChatModel === 'web-automation-model' ?
+        (process.env.NEXT_PUBLIC_MASTRA_SERVER_URL ?
+          `${process.env.NEXT_PUBLIC_MASTRA_SERVER_URL}/chat` :
+          'http://mastra-app:4112/chat') :
+        '/api/chat',
       fetch: fetchWithErrorHandlers,
-      prepareSendMessagesRequest({ messages, id, body }) {
-        return {
+      prepareSendMessagesRequest: initialChatModel !== 'web-automation-model' ?
+        ({ messages, id, body }) => ({
           body: {
             id,
             message: messages.at(-1),
@@ -80,8 +81,14 @@ export function Chat({
             selectedVisibilityType: visibilityType,
             ...body,
           },
-        };
-      },
+        }) : ({ messages, id, body }) => ({
+          body: {
+            messages,
+            threadId: id,
+            resourceId: session.user.id,
+            ...body,
+          },
+        }),
     }),
     onData: (dataPart) => {
       setDataStream((ds) => (ds ? [...ds, dataPart] : []));
@@ -90,10 +97,17 @@ export function Chat({
       mutate(unstable_serialize(getChatHistoryPaginationKey));
     },
     onError: (error) => {
+      console.error('Chat error:', error);
       if (error instanceof ChatSDKError) {
         toast({
           type: 'error',
           description: error.message,
+        });
+      } else {
+        // Handle other errors (like quota errors from Mastra)
+        toast({
+          type: 'error',
+          description: error?.message || 'An error occurred. Please try again.',
         });
       }
     },
@@ -171,37 +185,27 @@ export function Chat({
       })
     );
     
-    if (hasBrowserToolCall) {
-      if (initialChatModel === 'web-automation-model') {
-        // For web-automation-model, create browser artifact (only if not manually dismissed)
-        if (!isArtifactVisible && !browserArtifactDismissed) {
-          const userMessage = messages.find(msg => msg.role === 'user');
-          const messageText = userMessage?.parts.find(part => part.type === 'text')?.text || 'Web Automation';
-          const title = `Browser: ${messageText.slice(0, 40)}${messageText.length > 40 ? '...' : ''}`;
+    if (hasBrowserToolCall && !isArtifactVisible && !browserArtifactDismissed) {
+      const userMessage = messages.find(msg => msg.role === 'user');
+      const messageText = userMessage?.parts.find(part => part.type === 'text')?.text || 'Web Automation';
+      const title = `Browser: ${messageText.slice(0, 40)}${messageText.length > 40 ? '...' : ''}`;
 
-          setArtifact({
-            documentId: generateUUID(),
-            content: `# ${title}\n\nBrowser automation session starting...`,
-            kind: 'browser',
-            title,
-            status: 'idle',
-            isVisible: true,
-            boundingBox: {
-              top: 0,
-              left: 0,
-              width: 0,
-              height: 0,
-            },
-          });
-        }
-      } else {
-        // For other models, use the old BrowserPanel
-        if (!browserPanelVisible) {
-          setBrowserPanelVisible(true);
-        }
-      }
+      setArtifact({
+        documentId: generateUUID(),
+        content: `# ${title}\n\nBrowser automation session starting...`,
+        kind: 'browser',
+        title,
+        status: 'idle',
+        isVisible: true,
+        boundingBox: {
+          top: 0,
+          left: 0,
+          width: 0,
+          height: 0,
+        },
+      });
     }
-  }, [messages, browserPanelVisible, initialChatModel, isArtifactVisible, setArtifact, browserArtifactDismissed]);
+  }, [messages, isArtifactVisible, setArtifact, browserArtifactDismissed]);
 
   // Track when user manually closes the browser artifact
   useEffect(() => {
@@ -235,7 +239,7 @@ export function Chat({
         setBrowserArtifactDismissed(false);
       }
     }
-  }, [messages.length, browserArtifactDismissed]);
+  }, [messages, browserArtifactDismissed]);
 
   useAutoResume({
     autoResume,
@@ -243,20 +247,13 @@ export function Chat({
     resumeStream,
     setMessages,
   });
-   // Handler for benefit applications landing page
-   const handleBenefitApplicationsMessage = (messageText: string) => {
-    sendMessage({
-      role: 'user' as const,
-      parts: [{ type: 'text', text: messageText }],
-    });
-  };
 
   // Special UI for web automation agent - show landing page initially
   if (initialChatModel === 'web-automation-model' && messages.length === 0) {
     // Show landing page with header
     return (
       <>
-        <div className="flex h-dvh bg-background flex-col">
+        <div className="flex h-dvh bg-chat-background flex-col">
           <ChatHeader
             chatId={id}
             selectedModelId={initialChatModel}
@@ -265,11 +262,18 @@ export function Chat({
             session={session}
           />
           <BenefitApplicationsLanding
-            onSendMessage={handleBenefitApplicationsMessage}
+            input={input}
+            setInput={setInput}
             isReadonly={isReadonly}
             chatId={id}
             sendMessage={sendMessage}
             selectedVisibilityType={visibilityType}
+            status={status}
+            stop={stop}
+            attachments={attachments}
+            setAttachments={setAttachments}
+            messages={messages}
+            setMessages={setMessages}
           />
         </div>
         <Artifact
@@ -296,11 +300,8 @@ export function Chat({
   // Unified layout for all models
   return (
     <>
-      <div 
-        className={`flex h-dvh bg-white dark:bg-[#1a0b1a] ${browserPanelVisible ? 'flex-row' : 'flex-col'}`}
-      >
-        {/* Chat Panel */}
-        <div className={`flex flex-col min-w-0 h-full ${browserPanelVisible ? 'w-[30%] border-r border-gray-200 dark:border-gray-700' : 'w-full'}`}>
+      <div className="flex h-dvh bg-background flex-col">
+        <div className="flex flex-col min-w-0 size-full">
             <ChatHeader
               chatId={id}
               selectedModelId={initialChatModel}
@@ -320,7 +321,7 @@ export function Chat({
             isArtifactVisible={isArtifactVisible}
           />
 
-          <div className="shrink-0 mx-auto px-4 pt-6 bg-[#F4E4F0] dark:bg-[#1a0b1a] pb-4 md:pb-6 w-full">
+          <div className="shrink-0 mx-auto px-4 pt-6 bg-background pb-4 md:pb-6 w-full">
             {!isReadonly && (
               <form className="flex gap-2 w-full md:max-w-3xl mx-auto">
                 <MultimodalInput
@@ -340,17 +341,6 @@ export function Chat({
             )}
           </div>
         </div>
-
-        {/* Browser Panel */}
-        {browserPanelVisible && (
-          <div className="w-1/2 flex flex-col">
-            <BrowserPanel
-              sessionId={browserSessionId}
-              isVisible={browserPanelVisible}
-              onToggle={setBrowserPanelVisible}
-            />
-          </div>
-        )}
       </div>
 
       <Artifact

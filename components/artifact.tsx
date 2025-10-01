@@ -475,7 +475,7 @@ function PureArtifact({
               <ArtifactCloseButton />
             </div>
 
-            <div className="dark:bg-muted bg-background h-full overflow-y-scroll !max-w-full items-center">
+            <div className="dark:bg-muted bg-background h-full overflow-y-scroll !max-w-full items-center px-4">
               <artifactDefinition.content
                 title={artifact.title}
                 content={
