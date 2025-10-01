@@ -36,7 +36,7 @@ export function BenefitApplicationsLanding({
   setMessages,
 }: BenefitApplicationsLandingProps) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-[#F4E4F0] dark:bg-[#1a0b1a]">
+    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-chat-background">
       <div className="max-w-4xl w-full text-left">
         {/* Main Title */}
         <h1 className="text-5xl md:text-7xl font-extrabold text-purple-900 dark:text-purple-100 mb-16 leading-tight">
