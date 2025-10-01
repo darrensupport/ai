@@ -396,7 +396,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       return (
         <div className="flex items-center justify-center h-96">
           <div className="text-center">
-            <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+            <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
             <p className="text-sm text-muted-foreground">Initializing browser artifact...</p>
           </div>
         </div>
@@ -408,7 +408,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           {/* Connection status indicator */}
           {metadata.isConnecting && (
             <div className="flex items-center justify-center py-2 text-sm text-muted-foreground bg-muted/30">
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+              <Loader2 className="size-4 mr-2 animate-spin" />
               Connecting to browser...
             </div>
           )}
@@ -464,12 +464,12 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 <div className="text-center">
                   {metadata.isConnecting ? (
                     <>
-                      <Loader2 className="w-8 h-8 mx-auto mb-2 animate-spin" />
+                      <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
                       <p className="text-sm">Connecting to browser...</p>
                     </>
                   ) : (
                     <>
-                      <Monitor className="w-8 h-8 mx-auto mb-2" />
+                      <Monitor className="size-8 mx-auto mb-2" />
                       <p className="text-sm">No browser connection</p>
                       <p className="text-xs opacity-75">Browser display will appear here during automation</p>
                     </>
@@ -499,7 +499,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className="w-full h-full object-contain"
+                    className="size-full object-contain"
                     style={{ 
                       imageRendering: 'auto',
                       background: '#ffffff',
@@ -524,7 +524,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             <div className="px-4 pb-4 text-xs text-gray-500 flex justify-between">
               {/* <span>Session: {metadata.sessionId}</span> */}
               <span className="flex items-center gap-1">
-                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse" />
+                <div className="size-2 bg-green-400 rounded-full animate-pulse" />
                 Live
               </span>
             </div>
