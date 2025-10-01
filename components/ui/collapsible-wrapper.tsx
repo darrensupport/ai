@@ -8,8 +8,8 @@ import {
 } from './collapsible';
 
 import { Button } from './button';
-import { useState } from 'react';
 import { CircleCheck } from '@/components/animate-ui/icons/circle-check';
+import { useState } from 'react';
 
 interface CollapsibleWrapperProps {
   displayName: string;
@@ -17,6 +17,7 @@ interface CollapsibleWrapperProps {
   output?: any;
   isError?: boolean;
   className?: string;
+  icon?: React.ComponentType<any>;
 }
 
 export function CollapsibleWrapper({ 
@@ -24,7 +25,8 @@ export function CollapsibleWrapper({
   input, 
   output, 
   isError = false,
-  className
+  className,
+  icon: Icon
 }: CollapsibleWrapperProps) {
   const [open, setOpen] = useState(false);
   
@@ -35,11 +37,15 @@ export function CollapsibleWrapper({
     <Collapsible open={open} onOpenChange={setOpen} className={finalClassName}>
       <div className="flex items-center justify-between p-3">
         <div className={`text-[10px] leading-[150%] font-ibm-plex-mono text-[#767676] flex items-center gap-2 ${isError ? 'text-red-600' : ''}`}>
+          {Icon && (
+            <Icon size={12} className="text-gray-500 flex-shrink-0" />
+          )}
           {displayName}
           {isError && ' (Error)'}
           {!isError && output && (
-            <CircleCheck size={14} className="text-purple-600 dark:text-purple-400" />
+            <CircleCheck size={14} className="text-custom-purple" />
           )}
+          
         </div>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm" className="p-1 h-auto">

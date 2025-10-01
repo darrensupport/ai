@@ -1,38 +1,98 @@
 'use client';
-import cx from 'classnames';
+
 import { AnimatePresence, motion } from 'framer-motion';
-import { memo, useState } from 'react';
-import type { Vote } from '@/lib/db/schema';
-import { DocumentToolCall, DocumentToolResult } from './document';
-import { PencilEditIcon, SparklesIcon } from './icons';
-import { Markdown } from './markdown';
-import { MessageActions } from './message-actions';
-import { PreviewAttachment } from './preview-attachment';
-import { Weather } from './weather';
-import equal from 'fast-deep-equal';
-import { cn, sanitizeText } from '@/lib/utils';
-import { Button } from './ui/button';
-import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
-import { MessageEditor } from './message-editor';
-import { DocumentPreview } from './document-preview';
-import { MessageReasoning } from './message-reasoning';
-import type { UseChatHelpers } from '@ai-sdk/react';
-import type { ChatMessage } from '@/lib/types';
-import { useDataStream } from './data-stream-provider';
+import {
+  ArrowLeft,
+  Brain,
+  Camera,
+  CheckSquare,
+  ChevronDown,
+  Clock,
+  Code,
+  Database,
+  Download,
+  FileText,
+  Globe,
+  Keyboard,
+  Maximize2,
+  MessageCircle,
+  MessageSquare,
+  Monitor,
+  MousePointer,
+  Move,
+  Network,
+  PanelLeft,
+  Search,
+  Type,
+  Upload,
+  X
+} from 'lucide-react';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from './ui/collapsible';
-import { ChevronDown } from 'lucide-react';
+import { DocumentToolCall, DocumentToolResult } from './document';
+import { PencilEditIcon, SparklesIcon } from './icons';
+import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
+import { cn, sanitizeText } from '@/lib/utils';
+import { memo, useState } from 'react';
+
+import { Button } from './ui/button';
+import type { ChatMessage } from '@/lib/types';
 import { CollapsibleWrapper } from './ui/collapsible-wrapper';
+import { DocumentPreview } from './document-preview';
+import { Markdown } from './markdown';
+import { MessageActions } from './message-actions';
+import { MessageEditor } from './message-editor';
+import { MessageReasoning } from './message-reasoning';
+import { PreviewAttachment } from './preview-attachment';
+import type { UseChatHelpers } from '@ai-sdk/react';
+import type { Vote } from '@/lib/db/schema';
+import { Weather } from './weather';
+import cx from 'classnames';
+import equal from 'fast-deep-equal';
+import { useDataStream } from './data-stream-provider';
 
 // Type narrowing is handled by TypeScript's control flow analysis
 // The AI SDK provides proper discriminated unions for tool calls
 
+// Icon mapping for tool actions
+const getToolIcon = (toolName: string) => {
+  const cleanToolName = toolName.replace('tool-', '');
+  
+  const iconMap: Record<string, React.ComponentType<any>> = {
+    'playwright_browser_navigate': Globe,
+    'playwright_browser_click': MousePointer,
+    'playwright_browser_type': Type,
+    'playwright_browser_fill_form': FileText,
+    'playwright_browser_select_option': CheckSquare,
+    'playwright_browser_take_screenshot': Camera,
+    'playwright_browser_snapshot': Monitor,
+    'playwright_browser_wait_for': Clock,
+    'playwright_browser_hover': Move,
+    'playwright_browser_drag': Move,
+    'playwright_browser_press_key': Keyboard,
+    'playwright_browser_evaluate': Code,
+    'playwright_browser_close': X,
+    'playwright_browser_resize': Maximize2,
+    'playwright_browser_tabs': PanelLeft,
+    'playwright_browser_console_messages': MessageSquare,
+    'playwright_browser_network_requests': Network,
+    'playwright_browser_handle_dialog': MessageCircle,
+    'playwright_browser_file_upload': Upload,
+    'playwright_browser_install': Download,
+    'playwright_browser_navigate_back': ArrowLeft,
+    'search-participants-by-name': Search,
+    'get-participant-with-household': Database,
+    'updateWorkingMemory': Brain,
+  };
 
-// Mapping function for tool names to user-friendly descriptions
-const getToolDisplayName = (toolName: string, input?: any): string => {
+  return iconMap[cleanToolName] || FileText; // Default icon
+};
+
+// Mapping function for tool names to user-friendly descriptions with icons
+const getToolDisplayName = (toolName: string, input?: any): { text: string; icon: React.ComponentType<any> } => {
   const toolMappings: Record<string, (input?: any) => string> = {
     'playwright_browser_navigate': (input) => input?.url ? `Navigated to ${input.url}` : 'Navigated to page',
     'playwright_browser_click': (input) => input?.element ? `Clicked on ${input.element}` : 'Clicked element',
@@ -63,12 +123,18 @@ const getToolDisplayName = (toolName: string, input?: any): string => {
   const cleanToolName = toolName.replace('tool-', '');
   const mapper = toolMappings[cleanToolName];
   
+  let text: string;
   if (mapper) {
-    return mapper(input);
+    text = mapper(input);
+  } else {
+    // Fallback: convert kebab-case to readable format
+    text = cleanToolName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   }
   
-  // Fallback: convert kebab-case to readable format
-  return cleanToolName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+  return {
+    text,
+    icon: getToolIcon(toolName)
+  };
 };
 
 const PurePreviewMessage = ({
@@ -364,16 +430,16 @@ const PurePreviewMessage = ({
 
                 if (state === 'input-available') {
                   const { input } = part as any;
-                  const displayName = getToolDisplayName(type, input);
+                  const { text: displayName, icon } = getToolDisplayName(type, input);
                   
                   return (
-                    <CollapsibleWrapper key={toolCallId} displayName={displayName} input={input} />
+                    <CollapsibleWrapper key={toolCallId} displayName={displayName} input={input} icon={icon} />
                   );
                 }
 
                 if (state === 'output-available') {
                   const { output, input } = part as any;
-                  const displayName = getToolDisplayName(type, input);
+                  const { text: displayName, icon } = getToolDisplayName(type, input);
 
                   if (output && 'error' in output) {
                     return (
@@ -382,7 +448,8 @@ const PurePreviewMessage = ({
                         displayName={displayName} 
                         input={input} 
                         output={output} 
-                        isError={true} 
+                        isError={true}
+                        icon={icon}
                       />
                     );
                   }
@@ -392,7 +459,8 @@ const PurePreviewMessage = ({
                       key={toolCallId} 
                       displayName={displayName} 
                       input={input} 
-                      output={output} 
+                      output={output}
+                      icon={icon}
                     />
                   );
                 }
