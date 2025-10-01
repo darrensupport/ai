@@ -9,6 +9,7 @@ import {
 
 import { Button } from './button';
 import { useState } from 'react';
+import { CircleCheck } from '@/components/animate-ui/icons/circle-check';
 
 interface CollapsibleWrapperProps {
   displayName: string;
@@ -33,8 +34,12 @@ export function CollapsibleWrapper({
   return (
     <Collapsible open={open} onOpenChange={setOpen} className={finalClassName}>
       <div className="flex items-center justify-between p-3">
-        <div className={`text-[10px] leading-[150%] font-ibm-plex-mono text-[#767676] ${isError ? 'text-red-600' : ''}`}>
-          {displayName}{isError ? ' (Error)' : output ? ' Complete' : ''}
+        <div className={`text-[10px] leading-[150%] font-ibm-plex-mono text-[#767676] flex items-center gap-2 ${isError ? 'text-red-600' : ''}`}>
+          {displayName}
+          {isError && ' (Error)'}
+          {!isError && output && (
+            <CircleCheck size={14} className="text-purple-600 dark:text-purple-400" />
+          )}
         </div>
         <CollapsibleTrigger asChild>
           <Button variant="ghost" size="sm" className="p-1 h-auto">
