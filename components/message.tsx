@@ -30,47 +30,6 @@ import { CollapsibleWrapper } from './ui/collapsible-wrapper';
 // Type narrowing is handled by TypeScript's control flow analysis
 // The AI SDK provides proper discriminated unions for tool calls
 
-
-// Mapping function for tool names to user-friendly descriptions
-const getToolDisplayName = (toolName: string, input?: any): string => {
-  const toolMappings: Record<string, (input?: any) => string> = {
-    'playwright_browser_navigate': (input) => input?.url ? `Navigated to ${input.url}` : 'Navigated to page',
-    'playwright_browser_click': (input) => input?.element ? `Clicked on ${input.element}` : 'Clicked element',
-    'playwright_browser_type': (input) => input?.text ? `Typed "${input.text}"` : 'Typed text',
-    'playwright_browser_fill_form': () => 'Filled form fields',
-    'playwright_browser_select_option': (input) => input?.values ? `Selected "${input.values.join(', ')}"` : 'Selected option',
-    'playwright_browser_take_screenshot': () => 'Took screenshot',
-    'playwright_browser_snapshot': () => 'Captured page snapshot',
-    'playwright_browser_wait_for': (input) => input?.text ? `Waited for "${input.text}"` : 'Waited for element',
-    'playwright_browser_hover': (input) => input?.element ? `Hovered over ${input.element}` : 'Hovered over element',
-    'playwright_browser_drag': () => 'Performed drag and drop',
-    'playwright_browser_press_key': (input) => input?.key ? `Pressed key "${input.key}"` : 'Pressed key',
-    'playwright_browser_evaluate': () => 'Executed JavaScript',
-    'playwright_browser_close': () => 'Closed browser',
-    'playwright_browser_resize': () => 'Resized browser window',
-    'playwright_browser_tabs': () => 'Managed browser tabs',
-    'playwright_browser_console_messages': () => 'Retrieved console messages',
-    'playwright_browser_network_requests': () => 'Retrieved network requests',
-    'playwright_browser_handle_dialog': () => 'Handled dialog',
-    'playwright_browser_file_upload': () => 'Uploaded files',
-    'playwright_browser_install': () => 'Installed browser',
-    'playwright_browser_navigate_back': () => 'Navigated back',
-    'search-participants-by-name': (input) => input?.name ? `Searched for participant "${input.name}"` : 'Searched for participant',
-    'get-participant-with-household': () => 'Retrieved participant data',
-    'updateWorkingMemory': () => 'Updated working memory',
-  };
-
-  const cleanToolName = toolName.replace('tool-', '');
-  const mapper = toolMappings[cleanToolName];
-  
-  if (mapper) {
-    return mapper(input);
-  }
-  
-  // Fallback: convert kebab-case to readable format
-  return cleanToolName.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-};
-
 const PurePreviewMessage = ({
   chatId,
   message,
@@ -364,16 +323,16 @@ const PurePreviewMessage = ({
 
                 if (state === 'input-available') {
                   const { input } = part as any;
-                  const displayName = getToolDisplayName(type, input);
+                  const { text: displayName, icon } = getToolDisplayInfo(type, input);
                   
                   return (
-                    <CollapsibleWrapper key={toolCallId} displayName={displayName} input={input} />
+                    <CollapsibleWrapper key={toolCallId} displayName={displayName} input={input} icon={icon} />
                   );
                 }
 
                 if (state === 'output-available') {
                   const { output, input } = part as any;
-                  const displayName = getToolDisplayName(type, input);
+                  const { text: displayName, icon } = getToolDisplayInfo(type, input);
 
                   if (output && 'error' in output) {
                     return (
@@ -382,7 +341,8 @@ const PurePreviewMessage = ({
                         displayName={displayName} 
                         input={input} 
                         output={output} 
-                        isError={true} 
+                        isError={true}
+                        icon={icon}
                       />
                     );
                   }
@@ -392,7 +352,8 @@ const PurePreviewMessage = ({
                       key={toolCallId} 
                       displayName={displayName} 
                       input={input} 
-                      output={output} 
+                      output={output}
+                      icon={icon}
                     />
                   );
                 }
