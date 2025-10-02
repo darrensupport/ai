@@ -25,8 +25,8 @@ import equal from 'fast-deep-equal';
 import type { UseChatHelpers } from '@ai-sdk/react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ArrowDown } from 'lucide-react';
-import { useScrollToBottom } from '@/hooks/use-scroll-to-bottom';
-import type { VisibilityType } from './visibility-selector';
+import { useScrollToBottom } from '../hooks/use-scroll-to-bottom';
+import type { VisibilityType } from '../components/visibility-selector';
 import type { Attachment, ChatMessage } from '@/lib/types';
 
 function PureMultimodalInput({
@@ -405,6 +405,7 @@ function PureSendButton({
   return (
     <Button
       data-testid="send-button"
+      name="Send"
       className="size-10 rounded-full text-white p-0 flex items-center justify-center bg-custom-purple hover:bg-custom-purple/90 dark:bg-custom-purple dark:hover:bg-custom-purple/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
       onClick={(event) => {
         event.preventDefault();
