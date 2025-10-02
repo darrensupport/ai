@@ -8,8 +8,8 @@ import {
 } from './collapsible';
 
 import { Button } from './button';
-import { CircleCheck } from '@/components/animate-ui/icons/circle-check';
 import { useState } from 'react';
+import { CircleCheck } from '@/components/animate-ui/icons/circle-check';
 
 interface CollapsibleWrapperProps {
   displayName: string;
