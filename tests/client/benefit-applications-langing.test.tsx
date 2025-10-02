@@ -43,3 +43,16 @@ test('BenefitApplications Landing can handle input and disable send button when 
     await expect.element(getByText(/test input/)).not.toBeInTheDocument()
     await expect.element(getByTestId('send-button')).toBeDisabled()
 })
+
+test('BenefitApplications Landing can route to chat page when send button is clicked', async () => {
+    mockProps.input = 'test input'
+    const { getByText, getByTestId } = render(<BenefitApplicationsLanding {...mockProps} />)
+
+    await expect.element(getByText(/test input/)).toBeInTheDocument()
+    await expect.element(getByTestId('send-button')).toBeEnabled()
+
+    await getByTestId('send-button').click()
+
+    await expect(mockProps.sendMessage).toHaveBeenCalled()
+    await expect(window.location.pathname).toBe('/chat/test-chat-id')
+})
