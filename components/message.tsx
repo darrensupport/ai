@@ -325,7 +325,7 @@ const PurePreviewMessage = ({
                 if (state === 'input-available') {
                   const { input } = part as any;
                   const { text: displayName, icon } = getToolDisplayInfo(type, input);
-                  
+
                   return (
                     <CollapsibleWrapper key={toolCallId} displayName={displayName} input={input} icon={icon} />
                   );
