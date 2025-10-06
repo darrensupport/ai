@@ -448,7 +448,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       return (
         <div className="fixed inset-0 z-50 bg-black/90 backdrop-blur-sm">
           {/* Fullscreen header with controls */}
-          <div className="absolute top-0 left-0 right-0 z-10 bg-black/80 backdrop-blur-sm border-b border-white/10">
+          <div className="absolute top-0 left-0 right-0 z-10 bg-black/90 backdrop-blur-sm">
             <div className="flex items-center justify-between px-4 py-3">
               <div className="flex items-center gap-3 text-white">
                 <span className="text-sm font-medium">YOU ARE CONTROLLING THE BROWSER</span>
@@ -467,7 +467,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           </div>
 
           {/* Fullscreen browser canvas */}
-          <div className="absolute inset-0 pt-20 pb-12 px-12">
+          <div className="absolute inset-0 pt-20 pb-12 px-12 bg-black/80">
             {metadata.error ? (
               <div className="flex items-center justify-center h-full bg-red-900/20 text-red-300">
                 <div className="text-center">
