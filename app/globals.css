@@ -127,6 +127,28 @@
     }
 }
 
+/* Override skeleton styles for status indicators */
+.status-indicator {
+    background-color: inherit !important;
+}
+
+/* Allow Tailwind background classes to work on status indicators */
+.status-indicator.bg-red-500 {
+    background-color: #ef4444 !important;
+}
+
+.status-indicator.bg-green-500 {
+    background-color: #22c55e !important;
+}
+
+.status-indicator.bg-green-400 {
+    background-color: #4ade80 !important;
+}
+
+.status-indicator.bg-green\/90 {
+    background-color: rgba(34, 197, 94, 0.9) !important;
+}
+
 .ProseMirror {
     outline: none;
 }

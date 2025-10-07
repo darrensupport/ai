@@ -450,8 +450,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           {/* Fullscreen header with controls */}
           <div className="absolute top-0 left-0 right-0 z-10 bg-black/90 backdrop-blur-sm">
             <div className="flex items-center justify-between px-4 py-3">
-              <div className="flex items-center gap-3 text-white">
-                <span className="text-sm font-medium">YOU ARE CONTROLLING THE BROWSER</span>
+              <div className="flex items-center gap-2 text-white">
+                <div className="size-2 bg-red-500 rounded-full animate-pulse status-indicator" />
+                <span className="text-sm font-medium">YOU ARE IN CONTROLL</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -546,17 +547,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           {/* Control mode indicator */}
           {metadata.isConnected && (
             <div className="flex items-center justify-between px-4 py-2 bg-muted/20">
-              <div className="flex items-center gap-3 text-sm">
-                {metadata.controlMode === 'user' ? (
-                  <>
-                    <span className="text-blue-600 font-medium">You are controlling the browser</span>
-                    <span className="text-xs text-muted-foreground">Click and type to interact</span>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-xs text-muted-foreground">Agent is controlling the browser</span>
-                  </>
-                )}
+              <div className="flex items-center gap-2 text-sm">
+                  <div className="size-2 bg-green-500 rounded-full animate-pulse status-indicator" />
+                <span className="text-xs text-muted-foreground">AGENT MODE</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button
@@ -647,17 +640,6 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
               </div>
             )}
           </div>
-          
-          {/* Status footer */}
-          {metadata.isConnected && (
-            <div className="px-4 pb-4 text-xs text-gray-500 flex justify-between">
-              {/* <span>Session: {metadata.sessionId}</span> */}
-              <span className="flex items-center gap-1">
-                <div className="size-2 bg-green-400 rounded-full animate-pulse" />
-                Live
-              </span>
-            </div>
-          )}
         </div>
     );
   },
