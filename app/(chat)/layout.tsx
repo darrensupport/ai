@@ -5,6 +5,7 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { auth } from '../(auth)/auth';
 import Script from 'next/script';
 import { DataStreamProvider } from '@/components/data-stream-provider';
+import { LayoutHeader } from '@/components/layout-header';
 
 export const experimental_ppr = true;
 
@@ -25,7 +26,10 @@ export default async function Layout({
       <DataStreamProvider>
         <SidebarProvider defaultOpen={!isCollapsed}>
           <AppSidebar user={session?.user} />
-          <SidebarInset>{children}</SidebarInset>
+          <SidebarInset>
+            <LayoutHeader />
+            {children}
+          </SidebarInset>
         </SidebarProvider>
       </DataStreamProvider>
     </>

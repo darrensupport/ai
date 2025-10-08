@@ -35,7 +35,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               className="flex flex-row gap-3 items-center"
             >
               <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
-                Nava Labs AI
+                Application Assistant
               </span>
             </Link>
             <Tooltip>
@@ -46,7 +46,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   className="p-2 h-fit"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push('/');
+                    router.push('/home');
                     router.refresh();
                   }}
                 >
