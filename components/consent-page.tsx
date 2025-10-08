@@ -7,9 +7,10 @@ import { ArrowLeft, LogOut } from 'lucide-react';
 
 interface ConsentPageProps {
   onConsent: () => void;
+  onBack: () => void;
 }
 
-export function ConsentPage({ onConsent }: ConsentPageProps) {
+export function ConsentPage({ onConsent, onBack }: ConsentPageProps) {
   const [consentValue, setConsentValue] = useState<string>('');
 
   const handleConsent = () => {
@@ -20,21 +21,14 @@ export function ConsentPage({ onConsent }: ConsentPageProps) {
 
   return (
     <div className="bg-white relative min-h-screen w-full">
-      {/* Header */}
-      <div className="bg-white h-[59px] w-full border-b border-gray-200">
-        <div className="flex items-center justify-between h-full px-6">
-          <p className="text-[16px] font-bold text-black">ASP</p>
-          {/* TODO: Add back in button. Not in scope for this sprint */}
-          {/* <Button variant="outline" size="sm" className="border-[#cac4d0] rounded-full gap-2">
-            <LogOut className="w-5 h-5 text-[#49454f]" />
-            Sign out
-          </Button> */}
-        </div>
-      </div>
-
       {/* Back Button */}
       <div className="absolute left-[23px] top-[104px]">
-        <Button variant="outline" size="sm" className="border-[#cac4d0] rounded-full px-4 py-2.5 h-12 gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="border-[#cac4d0] rounded-full px-4 py-2.5 h-12 gap-2"
+          onClick={onBack}
+        >
           <ArrowLeft className="w-5 h-5 text-[#49454f]" />
           Back
         </Button>
