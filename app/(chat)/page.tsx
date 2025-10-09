@@ -14,19 +14,41 @@ export default async function Page() {
     redirect('/api/auth/guest');
   }
 
-  const id = generateUUID();
-
+  // Check if user is coming from a specific action (consent or previous chat)
   const cookieStore = await cookies();
-  const modelIdFromCookie = cookieStore.get('chat-model');
+  const fromConsent = cookieStore.get('from-consent');
+  const chatId = cookieStore.get('selected-chat-id');
+  
+  // If coming from consent flow or has a selected chat, show chat interface
+  if (fromConsent?.value === 'true' || chatId?.value) {
+    const id = generateUUID();
+    const modelIdFromCookie = cookieStore.get('chat-model');
 
-  if (!modelIdFromCookie) {
+    if (!modelIdFromCookie) {
+      return (
+        <>
+          <Chat
+            key={id}
+            id={id}
+            initialMessages={[]}
+            initialChatModel={DEFAULT_CHAT_MODEL}
+            initialVisibilityType="private"
+            isReadonly={false}
+            session={session}
+            autoResume={false}
+          />
+          <DataStreamHandler />
+        </>
+      );
+    }
+
     return (
       <>
         <Chat
           key={id}
           id={id}
           initialMessages={[]}
-          initialChatModel={DEFAULT_CHAT_MODEL}
+          initialChatModel={modelIdFromCookie.value}
           initialVisibilityType="private"
           isReadonly={false}
           session={session}
@@ -36,20 +58,7 @@ export default async function Page() {
       </>
     );
   }
-
-  return (
-    <>
-      <Chat
-        key={id}
-        id={id}
-        initialMessages={[]}
-        initialChatModel={modelIdFromCookie.value}
-        initialVisibilityType="private"
-        isReadonly={false}
-        session={session}
-        autoResume={false}
-      />
-      <DataStreamHandler />
-    </>
-  );
+  
+  // Otherwise, always redirect to home on first load
+  redirect('/home');
 }

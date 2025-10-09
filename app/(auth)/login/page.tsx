@@ -1,76 +1,86 @@
 'use client';
 
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useActionState, useEffect, useState } from 'react';
+import { useState } from 'react';
 import { toast } from '@/components/toast';
-
-import { AuthForm } from '@/components/auth-form';
-import { SubmitButton } from '@/components/submit-button';
-
-import { login, type LoginActionState } from '../actions';
 import { useSession } from 'next-auth/react';
+import { MicrosoftLogo } from '@/components/icons/MicrosoftLogo';
+import { GoogleLogo } from '@/components/icons/GoogleLogo';
 
 export default function Page() {
   const router = useRouter();
-
-  const [email, setEmail] = useState('');
-  const [isSuccessful, setIsSuccessful] = useState(false);
-
-  const [state, formAction] = useActionState<LoginActionState, FormData>(
-    login,
-    {
-      status: 'idle',
-    },
-  );
-
   const { update: updateSession } = useSession();
+  const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    if (state.status === 'failed') {
+  const handleMockLogin = async (provider: 'microsoft' | 'google') => {
+    setIsLoading(true);
+    
+    // Simulate API call delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    try {
+      // Mock successful login
+      toast({
+        type: 'success',
+        description: `Successfully signed in with ${provider === 'microsoft' ? 'Microsoft' : 'Google'}!`,
+      });
+      
+      // Update session and redirect
+      await updateSession();
+      router.push('/');
+    } catch (error) {
       toast({
         type: 'error',
-        description: 'Invalid credentials!',
+        description: `Failed to sign in with ${provider === 'microsoft' ? 'Microsoft' : 'Google'}`,
       });
-    } else if (state.status === 'invalid_data') {
-      toast({
-        type: 'error',
-        description: 'Failed validating your submission!',
-      });
-    } else if (state.status === 'success') {
-      setIsSuccessful(true);
-      updateSession();
-      router.refresh();
+    } finally {
+      setIsLoading(false);
     }
-  }, [state.status, router, updateSession]);
-
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get('email') as string);
-    formAction(formData);
   };
 
   return (
-    <div className="flex h-dvh w-screen items-start pt-12 md:pt-0 md:items-center justify-center bg-background">
-      <div className="w-full max-w-md overflow-hidden rounded-2xl flex flex-col gap-12">
-        <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="text-xl font-semibold dark:text-zinc-50">Sign In</h3>
-          <p className="text-sm text-gray-500 dark:text-zinc-400">
-            Use your email and password to sign in
+    <div className="bg-[#f5e9f2] relative size-full min-h-screen">
+      <div className="absolute bg-white border border-neutral-200 border-solid h-[260px] left-1/2 rounded-[10px] top-[257px] translate-x-[-50%] w-[414px]">
+        <div className="absolute content-stretch flex flex-col gap-[18px] h-[42px] items-center left-[32px] top-[32px] w-[350px]">
+          <p className="font-['Freight:Text_Medium',_sans-serif] leading-[1.5] min-w-full not-italic relative shrink-0 text-[32px] text-center text-neutral-900 tracking-[0.16px]">
+            Welcome
           </p>
+          <p className="font-['Inter:Regular',_sans-serif] font-normal leading-[1.5] min-w-full not-italic relative shrink-0 text-[14px] text-center text-neutral-900 tracking-[0.07px]">
+            Sign in to access the Application Assistant
+          </p>
+          
+          {/* Microsoft Login Button */}
+          <button
+            onClick={() => handleMockLogin('microsoft')}
+            disabled={isLoading}
+            className="border border-neutral-200 border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <div className="relative shrink-0 size-[13.25px]">
+              <MicrosoftLogo size={13.25} className="block max-w-none size-full" />
+            </div>
+            <div className="flex flex-col font-['Inter:Medium',_sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-neutral-900 text-nowrap">
+              <p className="leading-[14px] whitespace-pre">
+                {isLoading ? 'Signing in...' : 'Continue with Microsoft'}
+              </p>
+            </div>
+          </button>
+
+          {/* Google Login Button */}
+          <button
+            onClick={() => handleMockLogin('google')}
+            disabled={isLoading}
+            className="border border-neutral-200 border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            <div className="relative shrink-0 size-[13.25px]">
+              <GoogleLogo size={13.25} className="block max-w-none size-full" />
+            </div>
+            <div className="flex flex-col font-['Inter:Medium',_sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-neutral-900 text-nowrap">
+              <p className="leading-[14px] whitespace-pre">
+                {isLoading ? 'Signing in...' : 'Continue with Google'}
+              </p>
+            </div>
+          </button>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
-          <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
-          <p className="text-center text-sm text-gray-600 mt-4 dark:text-zinc-400">
-            {"Don't have an account? "}
-            <Link
-              href="/register"
-              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
-            >
-              Sign up
-            </Link>
-            {' for free.'}
-          </p>
-        </AuthForm>
       </div>
     </div>
   );

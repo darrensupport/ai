@@ -4,7 +4,6 @@ import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { useEffect, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
-import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
 import { fetcher, fetchWithErrorHandlers, generateUUID } from '@/lib/utils';
 import { Artifact } from './artifact';
@@ -248,19 +247,11 @@ export function Chat({
     setMessages,
   });
 
-  // Special UI for web automation agent - show landing page initially
+  // Special UI for web automation agent - show landing page
   if (initialChatModel === 'web-automation-model' && messages.length === 0) {
-    // Show landing page with header
     return (
       <>
         <div className="flex h-dvh bg-chat-background flex-col">
-          <ChatHeader
-            chatId={id}
-            selectedModelId={initialChatModel}
-            selectedVisibilityType={initialVisibilityType}
-            isReadonly={isReadonly}
-            session={session}
-          />
           <BenefitApplicationsLanding
             input={input}
             setInput={setInput}
@@ -302,14 +293,6 @@ export function Chat({
     <>
       <div className="flex h-dvh bg-background flex-col">
         <div className="flex flex-col min-w-0 size-full">
-            <ChatHeader
-              chatId={id}
-              selectedModelId={initialChatModel}
-              selectedVisibilityType={initialVisibilityType}
-              isReadonly={isReadonly}
-              session={session}
-            />
-
           <Messages
             chatId={id}
             status={status}
