@@ -3,7 +3,7 @@
 import Link from 'next/link';
 
 // Image assets from Figma
-const imgImage2 = "http://localhost:3845/assets/ece8c8b7e34efdeef33deffa16e95e45acc96858.png";
+const imgImage2 = "/nava_image.png";
 
 export default function LandingPage() {
   return (
