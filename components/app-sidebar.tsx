@@ -25,7 +25,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
 
   return (
     <Sidebar className="group-data-[side=left]:border-r-0 w-[265px]">
-      <SidebarHeader className="relative">
+      <SidebarHeader className="relative h-[176px] flex-shrink-0 overflow-hidden">
         <SidebarMenu>
           <div className="flex flex-row justify-between items-center">
             <div className="flex flex-row gap-3 items-center">
@@ -45,29 +45,28 @@ export function AppSidebar({ user }: { user: User | undefined }) {
             <div className="absolute top-[24px] right-[27px] z-10">
               <SidebarToggle />
             </div>
+            {/* New Chat Button */}
+            <div className="absolute left-[27px] top-[117px]">
+              <Button
+                variant="outline"
+                className="w-[214px] h-[40px] bg-[#e6e5dc] border-none rounded-[6px] px-[16px] py-[8px] flex items-center justify-center gap-[8px] hover:bg-custom-purple/20"
+                onClick={() => {
+                  setOpenMobile(false);
+                  router.push('/home');
+                  router.refresh();
+                }}
+              >
+                <PlusIcon size={16} />
+                <span className="text-[14px] font-medium text-black leading-[24px] not-italic font-sans">New chat</span>
+              </Button>
+            </div>
           </div>
         </SidebarMenu>
       </SidebarHeader>
       
-      <SidebarContent className="relative">
-        {/* New Chat Button */}
-        <div className="absolute left-[27px] top-[97px]">
-          <Button
-            variant="outline"
-            className="w-[214px] h-[40px] bg-[#e6e5dc] border-none rounded-[6px] px-[16px] py-[8px] flex items-center justify-center gap-[8px] hover:bg-custom-purple/20"
-            onClick={() => {
-              setOpenMobile(false);
-              router.push('/home');
-              router.refresh();
-            }}
-          >
-            <PlusIcon size={16} />
-            <span className="text-[14px] font-medium text-black leading-[24px] not-italic font-sans">New chat</span>
-          </Button>
-        </div>
-        
+      <SidebarContent className="relative overflow-y-auto">
         {/* Chat History */}
-        <div className="absolute left-[27px] top-[176px] w-[214px]">
+        <div className="px-[27px] pt-4 w-full">
           <SidebarHistory user={user} />
         </div>
       </SidebarContent>

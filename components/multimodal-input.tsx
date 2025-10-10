@@ -363,7 +363,7 @@ function PureAttachmentsButton({
   return (
     <Button
       data-testid="attachments-button"
-      className="rounded-md rounded-bl-lg p-[7px] h-fit border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
+      className="rounded-md rounded-bl-lg p-[7px] h-fit border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 hover:bg-custom-purple/20 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition-colors"
       onClick={(event) => {
         event.preventDefault();
         fileInputRef.current?.click();
