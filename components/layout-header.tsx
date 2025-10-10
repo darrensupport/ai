@@ -29,7 +29,7 @@ export function LayoutHeader() {
             data-testid="sidebar-toggle-button"
             onClick={toggleSidebar}
             variant="outline"
-            className="w-8 h-8 p-0 bg-white border-gray-300 hover:bg-gray-50"
+            className="w-8 h-8 p-0 bg-white border-gray-300 hover:bg-custom-purple/20"
           >
             <SidebarLeftIcon size={16} />
           </Button>
@@ -45,7 +45,7 @@ export function LayoutHeader() {
           <Button
             onClick={handleNewChat}
             variant="outline"
-            className="w-8 h-8 p-0 bg-white border-gray-300 hover:bg-gray-50"
+            className="w-8 h-8 p-0 bg-white border-gray-300 hover:bg-custom-purple/20"
           >
             <PlusIcon size={16} />
           </Button>
