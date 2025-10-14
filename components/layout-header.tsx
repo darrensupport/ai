@@ -21,7 +21,7 @@ export function LayoutHeader() {
   };
 
   return (
-    <div className="fixed left-0 top-0 w-[50px] h-screen bg-[#f5f4ee] flex flex-col items-center py-4 gap-4 z-50">
+    <div className="fixed left-0 top-0 w-[50px] h-screen bg-sidebar flex flex-col items-center py-4 gap-4 z-50">
       {/* Sidebar Toggle Button */}
       <Tooltip>
         <TooltipTrigger asChild>
@@ -29,7 +29,7 @@ export function LayoutHeader() {
             data-testid="sidebar-toggle-button"
             onClick={toggleSidebar}
             variant="outline"
-            className="w-8 h-8 p-0 bg-white border-gray-300 hover:bg-custom-purple/20"
+            className="w-8 h-8 p-0 bg-background border-sidebar-border hover:bg-custom-purple/20"
           >
             <SidebarLeftIcon size={16} />
           </Button>
@@ -45,7 +45,7 @@ export function LayoutHeader() {
           <Button
             onClick={handleNewChat}
             variant="outline"
-            className="w-8 h-8 p-0 bg-white border-gray-300 hover:bg-custom-purple/20"
+            className="w-8 h-8 p-0 bg-background border-sidebar-border hover:bg-custom-purple/20"
           >
             <PlusIcon size={16} />
           </Button>

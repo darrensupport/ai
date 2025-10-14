@@ -39,7 +39,7 @@ export function BenefitApplicationsLanding({
     <div className="flex-1 flex flex-col items-center justify-center p-8 bg-chat-background">
       <div className="max-w-4xl w-full text-left">
         {/* Main Title */}
-        <h1 className="text-[64px] font-serif leading-[1.15] text-black dark:text-white mb-16">
+        <h1 className="text-[64px] font-source-serif leading-[1.15] text-black dark:text-white mb-16">
           What program would you like to apply for?
         </h1>
 

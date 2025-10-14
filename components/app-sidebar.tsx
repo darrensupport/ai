@@ -36,7 +36,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                 }}
                 className="flex flex-row gap-3 items-center"
               >
-                <div className="absolute left-[27px] top-[25px] text-[18px] font-bold text-black leading-[1.15] not-italic font-serif">
+                <div className="absolute left-[27px] top-[25px] text-[18px] font-bold text-black dark:text-white leading-[1.15] not-italic font-source-serif">
                   <div>Application</div>
                   <div>Assistant</div>
                 </div>
@@ -49,7 +49,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
             <div className="absolute left-[27px] top-[117px]">
               <Button
                 variant="outline"
-                className="w-[214px] h-[40px] bg-[#e6e5dc] border-none rounded-[6px] px-[16px] py-[8px] flex items-center justify-center gap-[8px] hover:bg-custom-purple/20"
+                className="w-[214px] h-[40px] bg-[#e6e5dc] dark:bg-gray-700 border-none rounded-[6px] px-[16px] py-[8px] flex items-center justify-center gap-[8px] hover:bg-custom-purple/20 dark:hover:bg-custom-purple/30"
                 onClick={() => {
                   setOpenMobile(false);
                   router.push('/home');
@@ -57,7 +57,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                 }}
               >
                 <PlusIcon size={16} />
-                <span className="text-[14px] font-medium text-black leading-[24px] not-italic font-sans">New chat</span>
+                <span className="text-[14px] font-medium text-black dark:text-white leading-[24px] not-italic font-inter">New chat</span>
               </Button>
             </div>
           </div>
