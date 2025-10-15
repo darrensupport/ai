@@ -137,24 +137,6 @@ export function Chat({
   const { setArtifact, artifact } = useArtifact();
   const [browserArtifactDismissed, setBrowserArtifactDismissed] = useState(false);
 
-  const getArtifactTitle = () => {
-    // If we have an artifact with a title, use it
-    if (artifact?.title) {
-      return artifact.title;
-    }
-
-    // Otherwise, create a title from the first user message
-    const userMessage = messages.find(msg => msg.role === 'user');
-    if (userMessage) {
-      const messageText = userMessage.parts?.find(part => part.type === 'text')?.text || 'Browser session';
-      return `Browser: ${messageText}`;
-    }
-
-    return 'Browser:';
-  };
-
-  const artifactTitle = getArtifactTitle();
-
   // Simple session start time
   const sessionStartTime = 'Session started';
 
@@ -185,7 +167,7 @@ export function Chat({
     if (hasBrowserToolCall && !isArtifactVisible && !browserArtifactDismissed) {
       const userMessage = messages.find(msg => msg.role === 'user');
       const messageText = userMessage?.parts.find(part => part.type === 'text')?.text || 'Web Automation';
-      const title = `Browser: ${messageText.slice(0, 40)}${messageText.length > 40 ? '...' : ''}`;
+      const title = `Browser: ${messageText}`;
 
       setArtifact({
         documentId: generateUUID(),

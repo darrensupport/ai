@@ -23,71 +23,71 @@ export function ConsentPage({ onConsent, onNavigateHome }: ConsentPageProps) {
   };
 
   return (
-    <div className="bg-white relative min-h-screen w-full">
+    <div className="bg-background relative min-h-screen w-full">
 
       {/* Main Content */}
-      <div className="flex flex-col items-start justify-center py-16 ml-[265px] mr-[265px]">
-        <div className="w-full text-left">
+      <div className="flex flex-col items-start justify-center py-8 px-4 sm:py-12 sm:px-6 md:py-16 md:px-8 lg:py-20 lg:px-12 xl:py-24 xl:px-16">
+        <div className="w-full max-w-4xl mx-auto text-left">
           {/* Title */}
-          <h1 className="text-[42px] font-bold text-black mb-4 leading-[1.15] font-source-serif">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-[42px] font-bold text-foreground mb-4 leading-[1.15] font-source-serif">
             Consent for Agentic AI
           </h1>
           
           {/* Description */}
-          <p className="text-[18px] text-left text-black mb-8 leading-[1.5] max-w-[700px] font-inter">
+          <p className="text-sm sm:text-base md:text-lg lg:text-[18px] text-left text-foreground mb-6 sm:mb-8 leading-[1.5] max-w-[700px] font-inter">
             This tool uses your personal data to submit for benefit applications using artificial intelligence (AI).
           </p>
 
           {/* Bullet Points */}
-          <div className="max-w-[700px] mb-8">
-            <ul className="text-[18px] text-black text-left list-disc font-inter">
-              <li className="mb-3 ml-[27px]">
+          <div className="max-w-[700px] mb-6 sm:mb-8">
+            <ul className="text-sm sm:text-base md:text-lg lg:text-[18px] text-foreground text-left list-disc font-inter space-y-2 sm:space-y-3">
+              <li className="ml-4 sm:ml-[27px]">
                 <span className="leading-[1.05]">The AI tool is an early research prototype. It may make mistakes.</span>
               </li>
-              <li className="mb-3 ml-[27px]">
+              <li className="ml-4 sm:ml-[27px]">
                 <span className="leading-[1.05]">By consenting, you allow the AI to help complete forms and share information you provide.</span>
               </li>
-              <li className="mb-3 ml-[27px]">
+              <li className="ml-4 sm:ml-[27px]">
                 <span className="leading-[1.05]">Your data will only be shared with agencies or programs you select.</span>
               </li>
-              <li className="ml-[27px]">
+              <li className="ml-4 sm:ml-[27px]">
                 <span className="leading-[1.05]">Do not consent if you are uncomfortable with these terms.</span>
               </li>
             </ul>
           </div>
 
           {/* Terms Link */}
-          <p className="text-[18px] text-left text-black mb-8 leading-[1.5] max-w-[700px] font-inter">
+          <p className="text-sm sm:text-base md:text-lg lg:text-[18px] text-left text-foreground mb-6 sm:mb-8 leading-[1.5] max-w-[700px] font-inter">
             To learn more about how your data will be used, read the full{' '}
-            <span className="underline">terms & conditions</span>.
+            <span className="underline hover:no-underline transition-all duration-200">terms & conditions</span>.
           </p>
 
           {/* Consent Section */}
-          <div className="max-w-[700px] bg-gray-50 rounded-lg p-6">
-            <h3 className="text-[20px] font-bold text-black mb-4 text-left font-inter">
+          <div className="max-w-[700px] bg-muted dark:bg-muted/50 rounded-lg p-4 sm:p-6 border border-border">
+            <h3 className="text-lg sm:text-xl lg:text-[20px] font-bold text-foreground mb-3 sm:mb-4 text-left font-inter">
               Consent
             </h3>
             
-            <p className="text-[18px] text-black mb-6 text-left font-inter">
+            <p className="text-sm sm:text-base md:text-lg lg:text-[18px] text-foreground mb-4 sm:mb-6 text-left font-inter">
               You may withdraw consent at any time.
             </p>
 
             <RadioGroup
               value={consentValue}
               onValueChange={setConsentValue}
-              className="space-y-4"
+              className="space-y-3 sm:space-y-4"
             >
               <div className="flex items-start space-x-3">
                 <RadioGroupItem
                   value="yes"
                   id="consent-yes"
                   data-testid="consent-yes"
-                  className="mt-1 h-6 w-6"
+                  className="mt-1 h-5 w-5 sm:h-6 sm:w-6"
                 />
                 <div className="flex-1">
                   <label
                     htmlFor="consent-yes"
-                    className="text-[18px] text-left text-black cursor-pointer block leading-[1.2] font-inter"
+                    className="text-sm sm:text-base md:text-lg lg:text-[18px] text-left text-foreground cursor-pointer block leading-[1.2] font-inter"
                   >
                     I consent to the use of AI to complete forms and share my information with partner agencies on my behalf.
                   </label>
@@ -99,12 +99,12 @@ export function ConsentPage({ onConsent, onNavigateHome }: ConsentPageProps) {
                   value="no"
                   id="consent-no"
                   data-testid="consent-no"
-                  className="mt-1 h-6 w-6"
+                  className="mt-1 h-5 w-5 sm:h-6 sm:w-6"
                 />
                 <div className="flex-1">
                   <label
                     htmlFor="consent-no"
-                    className="text-[18px] text-left text-black cursor-pointer block leading-[1.2] font-inter"
+                    className="text-sm sm:text-base md:text-lg lg:text-[18px] text-left text-foreground cursor-pointer block leading-[1.2] font-inter"
                   >
                     I do NOT consent.
                   </label>
@@ -114,11 +114,11 @@ export function ConsentPage({ onConsent, onNavigateHome }: ConsentPageProps) {
           </div>
 
           {/* Confirm Button */}
-          <div className="flex justify-start mt-12">
+          <div className="flex justify-start mt-8 sm:mt-10 md:mt-12">
             <Button
               onClick={handleConsent}
               disabled={!consentValue}
-              className="px-6 py-4 text-[16px] font-medium bg-[#b14092] hover:bg-[#9a3579] disabled:bg-gray-400 disabled:cursor-not-allowed text-white rounded-2xl transition-colors duration-200 font-inter"
+              className="px-4 py-3 sm:px-6 sm:py-4 text-sm sm:text-base lg:text-[16px] font-medium bg-primary hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground disabled:cursor-not-allowed text-primary-foreground rounded-2xl transition-colors duration-200 font-inter"
             >
               Confirm choices
             </Button>

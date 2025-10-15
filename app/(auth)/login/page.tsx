@@ -39,13 +39,13 @@ export default function Page() {
   };
 
   return (
-    <div className="bg-[#f5e9f2] relative size-full min-h-screen">
-      <div className="absolute bg-white border border-neutral-200 border-solid h-[260px] left-1/2 rounded-[10px] top-[257px] translate-x-[-50%] w-[414px]">
+    <div className="bg-chat-background relative size-full min-h-screen">
+      <div className="absolute bg-card border border-border border-solid h-[260px] left-1/2 rounded-[10px] top-[257px] translate-x-[-50%] w-[414px]">
         <div className="absolute content-stretch flex flex-col gap-[18px] h-[42px] items-center left-[32px] top-[32px] w-[350px]">
-          <p className="font-['Freight:Text_Medium',_sans-serif] leading-[1.5] min-w-full not-italic relative shrink-0 text-[32px] text-center text-neutral-900 tracking-[0.16px]">
+          <p className="font-source-serif leading-[1.5] min-w-full not-italic relative shrink-0 text-[32px] text-center text-card-foreground tracking-[0.16px]">
             Welcome
           </p>
-          <p className="font-['Inter:Regular',_sans-serif] font-normal leading-[1.5] min-w-full not-italic relative shrink-0 text-[14px] text-center text-neutral-900 tracking-[0.07px]">
+          <p className="font-inter font-normal leading-[1.5] min-w-full not-italic relative shrink-0 text-[14px] text-center text-muted-foreground tracking-[0.07px]">
             Sign in to access the Application Assistant
           </p>
           
@@ -53,12 +53,12 @@ export default function Page() {
           <button
             onClick={() => handleMockLogin('microsoft')}
             disabled={isLoading}
-            className="border border-neutral-200 border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
           >
             <div className="relative shrink-0 size-[13.25px]">
               <MicrosoftLogo size={13.25} className="block max-w-none size-full" />
             </div>
-            <div className="flex flex-col font-['Inter:Medium',_sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-neutral-900 text-nowrap">
+            <div className="flex flex-col font-inter font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-card-foreground text-nowrap">
               <p className="leading-[14px] whitespace-pre">
                 {isLoading ? 'Signing in...' : 'Continue with Microsoft'}
               </p>
@@ -69,12 +69,12 @@ export default function Page() {
           <button
             onClick={() => handleMockLogin('google')}
             disabled={isLoading}
-            className="border border-neutral-200 border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
           >
             <div className="relative shrink-0 size-[13.25px]">
               <GoogleLogo size={13.25} className="block max-w-none size-full" />
             </div>
-            <div className="flex flex-col font-['Inter:Medium',_sans-serif] font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-neutral-900 text-nowrap">
+            <div className="flex flex-col font-inter font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-card-foreground text-nowrap">
               <p className="leading-[14px] whitespace-pre">
                 {isLoading ? 'Signing in...' : 'Continue with Google'}
               </p>
