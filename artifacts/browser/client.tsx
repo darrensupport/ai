@@ -640,7 +640,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1400}
-                    className={`w-full h-full object-cover bg-white ${metadata.controlMode === 'user' ? 'cursor-pointer' : 'cursor-default'}`}
+                    className={`size-full object-contain bg-white ${metadata.controlMode === 'user' ? 'cursor-pointer' : 'cursor-default'}`}
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}

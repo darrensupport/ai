@@ -274,10 +274,10 @@ function PureArtifact({
                 left: isSidebarOpen ? 265 + 450 : 50 + 450,
               }}
               animate={{ 
-                width: (artifact.kind === 'browser' && metadata?.isFullscreen && metadata?.controlMode === 'user') 
+                width: (artifact.kind === 'browser' && metadata?.isFullscreen) 
                   ? (windowWidth ? windowWidth : '100vw')
                   : (isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)')), 
-                left: (artifact.kind === 'browser' && metadata?.isFullscreen && metadata?.controlMode === 'user') ? 0 : (isSidebarOpen ? 265 + 450 : 50 + 450)
+                left: (artifact.kind === 'browser' && metadata?.isFullscreen) ? 0 : (isSidebarOpen ? 265 + 450 : 50 + 450)
               }}
               exit={{
                 width: isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)'),
@@ -286,7 +286,7 @@ function PureArtifact({
             />
           )}
 
-          {!isMobile && !(artifact.kind === 'browser' && metadata?.isFullscreen && metadata?.controlMode === 'user') && (
+          {!isMobile && !(artifact.kind === 'browser' && metadata?.isFullscreen) && (
             <motion.div
               className="relative w-[450px] min-w-[400px] max-w-[500px] bg-white dark:bg-[#1a0b1a] h-dvh shrink-0 pointer-events-auto"
               initial={{ 
@@ -405,13 +405,13 @@ function PureArtifact({
                   }
                 : {
                     opacity: 1,
-                    x: (artifact.kind === 'browser' && metadata?.isFullscreen && metadata?.controlMode === 'user') 
-                      ? (isSidebarOpen ? 265 : 50)
+                    x: (artifact.kind === 'browser' && metadata?.isFullscreen) 
+                      ? 0
                       : (isSidebarOpen ? 265 + 450 : 50 + 450),
                     y: 0,
                     height: windowHeight,
-                    width: (artifact.kind === 'browser' && metadata?.isFullscreen && metadata?.controlMode === 'user') 
-                      ? (isSidebarOpen ? (windowWidth ? windowWidth - 265 : 'calc(100vw - 265px)') : (windowWidth ? windowWidth - 50 : 'calc(100vw - 50px)'))
+                    width: (artifact.kind === 'browser' && metadata?.isFullscreen) 
+                      ? (windowWidth ? windowWidth : '100vw')
                       : (isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)')),
                     borderRadius: 0,
                     transition: {
@@ -434,7 +434,7 @@ function PureArtifact({
               },
             }}
           >
-            {!(artifact.kind === 'browser' && metadata?.isFullscreen && metadata?.controlMode === 'user') && (
+            {!(artifact.kind === 'browser' && metadata?.isFullscreen) && (
               <div className="p-2 flex flex-row justify-between items-start">
                 <div className="flex flex-row gap-4 items-start">
                   <ArtifactActions
