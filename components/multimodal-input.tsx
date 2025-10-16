@@ -239,7 +239,7 @@ function PureMultimodalInput({
         )}
       </AnimatePresence>
 
-      {messages.length === 0 &&
+      {/* {messages.length === 0 &&
         attachments.length === 0 &&
         uploadQueue.length === 0 && (
           <SuggestedActions
@@ -247,7 +247,7 @@ function PureMultimodalInput({
             chatId={chatId}
             selectedVisibilityType={selectedVisibilityType}
           />
-        )}
+        )} */}
 
       <input
         type="file"
@@ -315,22 +315,14 @@ function PureMultimodalInput({
       </div>
 
       <div className="flex flex-row justify-end gap-2 mt-1">
-        {status === 'streaming' || status === 'submitted' ? (
-          <>
-            <StopButton stop={stop} setMessages={setMessages} />
-            <SendButton
-              input={input}
-              submitForm={submitForm}
-              uploadQueue={uploadQueue}
-            />
-          </>
-        ) : (
+        <>
+          <StopButton status={status} stop={stop} setMessages={setMessages} />
           <SendButton
             input={input}
             submitForm={submitForm}
             uploadQueue={uploadQueue}
           />
-        )}
+        </>
       </div>
     </div>
   );
@@ -375,9 +367,11 @@ function PureAttachmentsButton({
 const AttachmentsButton = memo(PureAttachmentsButton);
 
 function PureStopButton({
+  status,
   stop,
   setMessages,
 }: {
+  status: UseChatHelpers<ChatMessage>['status'];
   stop: () => void;
   setMessages: UseChatHelpers<ChatMessage>['setMessages'];
 }) {
@@ -390,6 +384,7 @@ function PureStopButton({
         stop();
         setMessages((messages) => messages);
       }}
+      disabled={status !== 'streaming' && status !== 'submitted'}
     >
       <StopIcon size={20} />
       <span>Stop</span>
