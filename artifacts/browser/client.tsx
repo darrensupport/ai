@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick } from 'lucide-react';
 import { toast } from 'sonner';
+import { Cursor, CursorFollow, CursorProvider } from '@/components/animate-ui/components/animate/cursor';
 
 interface BrowserFrame {
   type: 'frame';
@@ -205,7 +206,6 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             sessionId: currentSessionId
           }));
         }
-        
         wsRef.current.close();
         wsRef.current = null;
       }
@@ -520,28 +520,34 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="h-full flex items-center justify-center border-4 border-black">
-                <div
-                  className="relative h-full max-h-[calc(100vh-12rem)] rounded-lg overflow-hidden shadow-2xl bg-white"
-                  tabIndex={0}
-                  onKeyDown={handleKeyboardInput}
-                  onKeyUp={handleKeyboardInput}
-                >
-                  <canvas
-                    ref={canvasRef}
-                    id="browser-artifact-canvas"
-                    width={1920}
-                    height={1080}
-                    className="h-full object-contain bg-white cursor-pointer"
-                    onClick={handleCanvasInteraction}
-                    onMouseMove={handleCanvasInteraction}
-                    onWheel={handleCanvasInteraction}
-                    onContextMenu={(e) => {
-                      e.preventDefault(); // Allow right-click handling
-                    }}
-                  />
+              <CursorProvider>
+                <div className="h-full flex items-center justify-center border-4 border-black">
+                  <div
+                    className="relative h-full max-h-[calc(100vh-12rem)] rounded-lg overflow-hidden shadow-2xl bg-white"
+                    tabIndex={0}
+                    onKeyDown={handleKeyboardInput}
+                    onKeyUp={handleKeyboardInput}
+                  >
+                    <canvas
+                      ref={canvasRef}
+                      id="browser-artifact-canvas"
+                      width={1920}
+                      height={1080}
+                      className="h-full object-contain bg-white"
+                      onClick={handleCanvasInteraction}
+                      onMouseMove={handleCanvasInteraction}
+                      onWheel={handleCanvasInteraction}
+                      onContextMenu={(e) => {
+                        e.preventDefault(); // Allow right-click handling
+                      }}
+                    />
+                  </div>
+                  <Cursor className="text-white drop-shadow-lg"/>
+                  <CursorFollow>
+                    User
+                  </CursorFollow>
                 </div>
-              </div>
+              </CursorProvider>
             )}
           </div>
         </div>
@@ -613,6 +619,15 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                       <Monitor className="size-8 mx-auto mb-2" />
                       <p className="text-sm">No browser connection</p>
                       <p className="text-xs opacity-75">Browser display will appear here during automation</p>
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="mt-2 bg-custom-purple"
+                        onClick={connectToBrowserStream}
+                      >
+                        <RefreshCwIcon className="size-4 mr-1" />
+                        Retry
+                      </Button>
                     </>
                   )}
                 </div>
@@ -620,7 +635,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             ) : (
               <div className="absolute inset-0 flex items-center justify-center p-6 rounded-lg">
                 <div
-                  className="relative rounded-md overflow-hidden shadow-lg ring-1 ring-black/5 bg-white w-11/12 h-11/12 max-w-6xl max-h-5xl"
+                  className="relative h-full w-full"
                   tabIndex={metadata.controlMode === 'user' ? 0 : -1}
                   onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
                   onKeyUp={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
@@ -639,8 +654,8 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     ref={canvasRef}
                     id="browser-artifact-canvas"
                     width={1920}
-                    height={1400}
-                    className={`size-full object-contain bg-white ${metadata.controlMode === 'user' ? 'cursor-pointer' : 'cursor-default'}`}
+                    height={1080}
+                    className={`size-full object-contain bg-white browser-canvas-regular`}
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}

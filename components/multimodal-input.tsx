@@ -321,6 +321,7 @@ function PureMultimodalInput({
             input={input}
             submitForm={submitForm}
             uploadQueue={uploadQueue}
+            status={status}
           />
         </>
       </div>
@@ -398,15 +399,20 @@ function PureSendButton({
   submitForm,
   input,
   uploadQueue,
+  status,
 }: {
   submitForm: () => void;
   input: string;
   uploadQueue: Array<string>;
+  status: UseChatHelpers<ChatMessage>['status'];
 }) {
+  const isEnabled = input.length > 0 && uploadQueue.length === 0;
+  const shouldShowWaitCursor = isEnabled && (status === 'submitted' || status === 'streaming');
+  
   return (
     <Button
       data-testid="send-button"
-      className="bg-custom-purple hover:bg-custom-purple/90 disabled:bg-[rgba(29,27,32,0.1)] disabled:hover:bg-[rgba(29,27,32,0.15)] rounded-[100px] px-3 py-1.5 flex items-center gap-1 text-white disabled:text-[#1d1b20] text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+      className={`bg-custom-purple hover:bg-custom-purple/90 disabled:bg-[rgba(29,27,32,0.1)] disabled:hover:bg-[rgba(29,27,32,0.15)] rounded-[100px] px-3 py-1.5 flex items-center gap-1 text-white disabled:text-[#1d1b20] text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed transition-colors ${shouldShowWaitCursor ? 'cursor-wait' : ''}`}
       onClick={(event) => {
         event.preventDefault();
         submitForm();
@@ -423,5 +429,6 @@ const SendButton = memo(PureSendButton, (prevProps, nextProps) => {
   if (prevProps.uploadQueue.length !== nextProps.uploadQueue.length)
     return false;
   if (prevProps.input !== nextProps.input) return false;
+  if (prevProps.status !== nextProps.status) return false;
   return true;
 });
