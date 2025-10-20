@@ -270,8 +270,10 @@ function PureArtifact({
             <motion.div
               className="fixed bg-background h-dvh pointer-events-auto"
               initial={{
-                width: isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)'),
-                left: isSidebarOpen ? 265 + 450 : 50 + 450,
+                width: (artifact.kind === 'browser' && metadata?.isFullscreen) 
+                  ? (windowWidth ? windowWidth : '100vw')
+                  : (isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)')),
+                left: (artifact.kind === 'browser' && metadata?.isFullscreen) ? 0 : (isSidebarOpen ? 265 + 450 : 50 + 450),
               }}
               animate={{ 
                 width: (artifact.kind === 'browser' && metadata?.isFullscreen) 
@@ -280,8 +282,10 @@ function PureArtifact({
                 left: (artifact.kind === 'browser' && metadata?.isFullscreen) ? 0 : (isSidebarOpen ? 265 + 450 : 50 + 450)
               }}
               exit={{
-                width: isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)'),
-                left: isSidebarOpen ? 265 + 450 : 50 + 450,
+                width: (artifact.kind === 'browser' && metadata?.isFullscreen) 
+                  ? (windowWidth ? windowWidth : '100vw')
+                  : (isSidebarOpen ? (windowWidth ? windowWidth - 265 - 450 : 'calc(100vw - 265px - 450px)') : (windowWidth ? windowWidth - 50 - 450 : 'calc(100vw - 50px - 450px)')),
+                left: (artifact.kind === 'browser' && metadata?.isFullscreen) ? 0 : (isSidebarOpen ? 265 + 450 : 50 + 450),
               }}
             />
           )}
@@ -452,7 +456,7 @@ function PureArtifact({
               </div>
             )}
 
-            <div className="dark:bg-muted bg-background h-full overflow-y-scroll !max-w-full items-center px-4">
+            <div className="dark:bg-muted bg-background h-full overflow-y-scroll !max-w-full items-center px-4 py-4">
               <artifactDefinition.content
                 title={artifact.title}
                 content={

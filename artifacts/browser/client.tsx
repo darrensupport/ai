@@ -476,7 +476,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                   className="px-4 py-2.5 rounded text-sm font-medium leading-5 border-0 hover:bg-custom-purple/90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-custom-purple"
                 >
                   <div className="flex items-center gap-2 text-white">
-                    Hand Back Control
+                    Hand back control
                   </div>
                 </Button>
               </div>
@@ -521,7 +521,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
               </div>
             ) : (
               <CursorProvider>
-                <div className="h-full flex items-center justify-center border-4 border-black">
+                <div className="h-full flex items-center justify-center border-4 border-black px-4">
                   <div
                     className="relative h-full max-h-[calc(100vh-12rem)] rounded-lg overflow-hidden shadow-2xl bg-white"
                     tabIndex={0}
@@ -633,7 +633,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="absolute inset-0 flex items-center justify-center p-6 rounded-lg">
+              <div className="absolute inset-0 flex items-center justify-center">
                 <div
                   className="relative h-full w-full"
                   tabIndex={metadata.controlMode === 'user' ? 0 : -1}
@@ -655,7 +655,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className={`size-full object-contain bg-white browser-canvas-regular`}
+                    className={`size-full object-contain bg-white browser-canvas-regular rounded-lg`}
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}
