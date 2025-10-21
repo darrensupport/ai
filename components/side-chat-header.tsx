@@ -52,13 +52,8 @@ function PureSideChatHeader({
   };
 
   return (
-    <div className={`border-b border-gray-200 dark:border-gray-700 px-4 py-3 bg-white dark:bg-gray-900 ${className}`}>
-      <div className="flex flex-col left-[27px] top-[25px] text-[18px] font-bold text-black leading-[1.15] not-italic font-source-serif mb-2">
-        <div>Application</div>
-        <div>Assistant</div>
-      </div>
-      <hr className="my-2" />
-      <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 pt-4 mb-2 truncate">
+    <div className={`border-b border-gray-200 dark:border-gray-700 px-4 py-6 bg-white dark:bg-gray-900 ${className}`}>
+      <h3 className="text-sm font-inter font-bold text-black dark:text-gray-100 pt-4 mb-2 truncate">
         {artifactTitle || 'Browser:'}
       </h3>
       <p className="font-mono text-[10px] font-normal text-black dark:text-gray-300 pb-2">

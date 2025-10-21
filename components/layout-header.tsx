@@ -10,10 +10,10 @@ import { closeArtifact, useArtifact } from '@/hooks/use-artifact';
 export function LayoutHeader() {
   const { state, toggleSidebar } = useSidebar();
   const router = useRouter();
-  const { setArtifact } = useArtifact();
+  const { setArtifact, artifact, metadata } = useArtifact();
 
-  // Don't show the component when sidebar is expanded
-  if (state === 'expanded') {
+  // Don't show the component when sidebar is expanded or browser artifact is in fullscreen mode
+  if (state === 'expanded' || (artifact.kind === 'browser' && metadata?.isFullscreen)) {
     return null;
   }
 
