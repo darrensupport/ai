@@ -568,7 +568,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
            
           {/* Control mode indicator */}
           {metadata.isConnected && (
-            <div className="flex items-center justify-between px-4 py-2 bg-muted/20">
+            <div className="flex items-center justify-between py-2 bg-muted/20">
               <div className="flex items-center gap-2 text-sm">
                   <div className="size-2 bg-green-500 rounded-full animate-pulse status-indicator" />
                 <span className="text-xs text-muted-foreground">AGENT MODE</span>
@@ -589,7 +589,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             </div>
           )}
           {/* Main browser display area */}
-          <div className="flex-1 relative bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-inner border border-gray-200/50 m-4">
+          <div className="flex-1 relative m-4">
             {metadata.error ? (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-50 text-gray-500 font-inter">
                 <div className="text-center">
@@ -636,7 +636,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             ) : (
               <div className="absolute inset-0 flex items-center justify-center">
                 <div
-                  className="relative h-full w-full"
+                  className="relative w-full"
                   tabIndex={metadata.controlMode === 'user' ? 0 : -1}
                   onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
                   onKeyUp={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
