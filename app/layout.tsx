@@ -9,8 +9,8 @@ import { SessionProvider } from 'next-auth/react';
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://chat.vercel.ai'),
-  title: 'Form Filler | Prototype',
-  description: 'Form Filler prototype using Agentic AI',
+  title: 'Form-Filling Assistant | Prototype',
+  description: 'Form-Filling Assistant prototype using Agentic AI',
 };
 
 export const viewport = {
