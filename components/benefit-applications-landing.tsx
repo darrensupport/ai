@@ -40,12 +40,12 @@ export function BenefitApplicationsLanding({
       <div className="max-w-4xl w-full text-left">
         {/* Main Title */}
         <h1 className="text-[64px] font-source-serif leading-[1.15] text-black dark:text-white mb-12">
-          Let's start a new application.
+          Let&apos;s start a new application.
         </h1>
 
         {/* Subheader */}
         <h2 className="text-2xl font-inter text-black dark:text-white mb-12">
-          What's your client's name and which program do they need?
+          What&apos;s your client&apos;s name and which program do they need?
         </h2>
 
         {/* Input Form */}
