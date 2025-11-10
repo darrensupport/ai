@@ -63,6 +63,7 @@ export function BenefitApplicationsLanding({
             sendMessage={sendMessage}
             selectedVisibilityType={selectedVisibilityType}
             showStopButton={false}
+            placeholder="Ex. Fill out the WIC form for Jane Doe"
           />
         </div>
       </div>
