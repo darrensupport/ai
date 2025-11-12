@@ -24,11 +24,17 @@ export default function Page() {
     }
   };
 
-  const handleMicrosoftLogin = () => {
-    toast({
-      type: 'success',
-      description: 'Microsoft sign-in coming soon!',
-    });
+  const handleMicrosoftLogin = async () => {
+    setIsLoading(true);
+    try {
+      await signIn('microsoft-entra-id', { callbackUrl: '/home' });
+    } catch (error) {
+      toast({
+        type: 'error',
+        description: 'Failed to sign in with Microsoft',
+      });
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -45,15 +51,15 @@ export default function Page() {
           {/* Microsoft Login Button */}
           <button
             onClick={handleMicrosoftLogin}
-            disabled={true}
-            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full opacity-50 cursor-not-allowed transition-colors bg-card"
+            disabled={isLoading}
+            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
           >
             <div className="relative shrink-0 size-[13.25px]">
               <MicrosoftLogo size={13.25} className="block max-w-none size-full" />
             </div>
             <div className="flex flex-col font-inter font-medium justify-center leading-[0] not-italic relative shrink-0 text-[14px] text-center text-card-foreground text-nowrap">
               <p className="leading-[14px] whitespace-pre">
-                Continue with Microsoft (Coming Soon)
+                Continue with Microsoft
               </p>
             </div>
           </button>
