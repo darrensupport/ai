@@ -30,7 +30,7 @@ import { getToolDisplayInfo } from './tool-icon';
 import { Spinner } from './ui/spinner';
 
 // Responsive min-height calculation that accounts for side-chat-header height
-const RESPONSIVE_MIN_HEIGHT = '';
+const RESPONSIVE_MIN_HEIGHT = 'min-h-[calc(60vh-3rem)] sm:min-h-[calc(60vh-3.5rem)] md:min-h-[calc(60vh-4rem)] lg:min-h-[calc(60vh-5rem)] xl:min-h-[calc(60vh-6rem)] 2xl:min-h-[calc(60vh-7rem)]';
 
 // Type narrowing is handled by TypeScript's control flow analysis
 // The AI SDK provides proper discriminated unions for tool calls
@@ -55,7 +55,6 @@ const PurePreviewMessage = ({
   requiresScrollPadding: boolean;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
-  const messageRef = useRef<HTMLDivElement>(null);
 
   const attachmentsFromMessage = message.parts.filter(
     (part) => part.type === 'file',
@@ -63,24 +62,9 @@ const PurePreviewMessage = ({
 
   useDataStream();
 
-  // Scroll user messages to top when they're added
-  useEffect(() => {
-    if (message.role === 'user' && requiresScrollPadding && messageRef.current) {
-      // Small delay to ensure DOM is ready
-      setTimeout(() => {
-        messageRef.current?.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'start',
-          inline: 'nearest'
-        });
-      }, 0);
-    }
-  }, [message.role, requiresScrollPadding, message.id]);
-
   return (
     <AnimatePresence>
       <motion.div
-        ref={messageRef}
         data-testid={`message-${message.role}`}
         className="w-full mx-auto max-w-3xl px-4 group/message"
         initial={{ y: 5, opacity: 0 }}
@@ -97,7 +81,11 @@ const PurePreviewMessage = ({
           )}
         >
 
-          <div className="flex flex-col gap-4 w-full">
+          <div
+            className={cn('flex flex-col gap-4 w-full', {
+              [RESPONSIVE_MIN_HEIGHT]: message.role === 'assistant' && requiresScrollPadding,
+            })}
+          >
             {attachmentsFromMessage.length > 0 && (
               <div
                 data-testid={`message-attachments`}

@@ -7,7 +7,6 @@ import type { UseChatHelpers } from '@ai-sdk/react';
 import { motion } from 'framer-motion';
 import { useMessages } from '@/hooks/use-messages';
 import type { ChatMessage } from '@/lib/types';
-import { SideChatHeader } from './side-chat-header';
 
 interface ArtifactMessagesProps {
   chatId: string;
@@ -18,10 +17,6 @@ interface ArtifactMessagesProps {
   regenerate: UseChatHelpers<ChatMessage>['regenerate'];
   isReadonly: boolean;
   artifactStatus: UIArtifact['status'];
-  artifactTitle?: string;
-  sessionStartTime?: Date;
-  artifactKind?: string;
-  metadata?: any;
 }
 
 function PureArtifactMessages({
@@ -32,10 +27,6 @@ function PureArtifactMessages({
   setMessages,
   regenerate,
   isReadonly,
-  artifactTitle,
-  sessionStartTime,
-  artifactKind,
-  metadata,
 }: ArtifactMessagesProps) {
   const {
     containerRef: messagesContainerRef,
@@ -52,19 +43,8 @@ function PureArtifactMessages({
   return (
     <div
       ref={messagesContainerRef}
-      className="flex flex-col gap-4 h-full items-center overflow-y-scroll px-6"
+      className="flex flex-col gap-4 h-full items-center overflow-y-scroll px-6 pt-6"
     >
-      {messages.length > 0 && (
-        <div className="sticky top-0 z-10 w-full -mx-6 mb-4">
-          <SideChatHeader
-            title="Chat"
-            artifactTitle={artifactTitle}
-            sessionStartTime={sessionStartTime}
-            artifactKind={artifactKind}
-            metadata={metadata}
-          />
-        </div>
-      )}
       {messages.map((message, index) => (
         <PreviewMessage
           chatId={chatId}
