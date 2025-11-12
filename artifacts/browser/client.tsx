@@ -2,7 +2,7 @@ import { Artifact } from '@/components/create-artifact';
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick, Clock } from 'lucide-react';
+import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick, ClockFading } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface BrowserFrame {
@@ -514,7 +514,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     </>
                   ) : (
                     <>
-                      <Clock className="size-8 mx-auto mb-2" />
+                      <ClockFading className="size-8 mx-auto mb-2" />
                       <p className="text-sm font-medium">Your session was paused due to inactivity</p>
                       <p className="text-xs opacity-75">Refresh the connection and try again</p>
                       <Button
@@ -620,7 +620,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     </>
                   ) : (
                     <>
-                      <Clock className="size-8 mx-auto mb-2" />
+                      <ClockFading className="size-8 mx-auto mb-2" />
                       <p className="text-sm font-medium">Your session was paused due to inactivity</p>
                       <p className="text-xs opacity-75">Refresh the connection and try again</p>
                       <Button
