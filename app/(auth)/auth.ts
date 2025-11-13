@@ -49,6 +49,11 @@ export const {
       clientId: process.env.AUTH_MICROSOFT_ENTRA_ID_ID,
       clientSecret: process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET,
       issuer: process.env.AUTH_MICROSOFT_ENTRA_ID_ISSUER,
+      authorization: {
+        params: {
+          scope: "openid profile email User.Read"
+        }
+      }
     }),
     Credentials({
       name: 'credentials',
