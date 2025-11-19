@@ -11,43 +11,45 @@ export default function LandingPage() {
   return (
     <div className="bg-white dark:bg-background relative min-h-screen">
       {/* Main Content Container */}
-      <div className="p-4 sm:p-6 md:p-8 lg:px-16 xl:px-32 2xl:px-[200px]">
+      <div className="p-4 sm:p-6 md:p-8 lg:px-16 xl:px-32 2xl:px-[200px] pt-16 md:pt-24 lg:pt-4">
         {/* Hero Section */}
-        <div className="relative bg-[#f4e4f0] dark:bg-[#1a0b1a] rounded-[25px] h-[280px] sm:h-[320px] md:h-[351px] mb-6 sm:mb-8 overflow-hidden">
-          {/* Background Images */}
-          <div className="absolute inset-0">
-            <div className="absolute h-[250px] sm:h-[280px] md:h-[337px] top-[14px] w-[280px] sm:w-[350px] md:w-[439px] right-0">
-              <div className="absolute inset-0 mix-blend-normal overflow-hidden pointer-events-none opacity-80 brightness-100 contrast-110 dark:opacity-60 dark:brightness-75 dark:contrast-120">
-                <Image
-                  alt=""
-                  className="absolute h-full left-[-21.65%] max-w-none top-0 w-[136.47%]"
-                  src={imgImage2}
-                  fill
-                  style={{ objectFit: 'cover' }}
-                />
+        <div className="relative bg-[#f4e4f0] dark:bg-[#1a0b1a] rounded-[25px] mb-6 sm:mb-8 overflow-hidden">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between md:min-h-[351px]">
+            {/* Image Container - On top for mobile, right side for desktop */}
+            <div className="order-1 md:order-2 w-full md:w-auto md:flex-shrink-0">
+              <div className="relative h-[200px] sm:h-[250px] md:h-[337px] w-full md:w-[350px] lg:w-[439px]">
+                <div className="absolute inset-0 mix-blend-normal overflow-hidden pointer-events-none opacity-80 brightness-100 contrast-110 dark:opacity-60 dark:brightness-75 dark:contrast-120">
+                  <Image
+                    alt=""
+                    className="absolute h-full w-full object-cover md:left-[-21.65%] md:w-[136.47%]"
+                    src={imgImage2}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          {/* Content */}
-          <div className="relative z-10 p-4 sm:p-6 md:p-8 h-full flex flex-col justify-between">
-            <div>
-              <h1 className="font-source-serif text-3xl sm:text-4xl md:text-5xl leading-tight text-black dark:text-white mb-3 sm:mb-4">
-                Welcome!
-              </h1>
-              <p className="font-inter text-base sm:text-lg md:text-xl leading-6 text-black dark:text-gray-200 max-w-[250px] sm:max-w-[291px]">
-                Form-Filling Assistant helps you and your clients complete benefit applications faster.
-              </p>
-            </div>
-            
-            {/* Start Application Button */}
-            <div className="mt-auto">
-              <button 
-                onClick={() => router.push('/')}
-                className="bg-custom-purple text-white font-inter font-medium text-sm leading-6 px-6 sm:px-7 py-2 sm:py-2.5 rounded-lg hover:bg-custom-purple/90 transition-colors cursor-pointer"
-              >
-                Start new application
-              </button>
+            {/* Content - Below image for mobile, left side for desktop */}
+            <div className="order-2 md:order-1 p-4 sm:p-6 md:p-8 flex flex-col justify-between md:flex-1 md:pr-4">
+              <div>
+                <h1 className="font-source-serif text-3xl sm:text-4xl md:text-5xl leading-tight text-black dark:text-white mb-3 sm:mb-4">
+                  Welcome!
+                </h1>
+                <p className="font-inter text-base sm:text-lg md:text-xl leading-6 text-black dark:text-gray-200 md:max-w-[291px]">
+                  Form-Filling Assistant helps you and your clients complete benefit applications faster.
+                </p>
+              </div>
+              
+              {/* Start Application Button */}
+              <div className="mt-4 md:mt-6">
+                <button 
+                  onClick={() => router.push('/')}
+                  className="bg-custom-purple text-white font-inter font-medium text-sm leading-6 px-6 sm:px-7 py-2 sm:py-2.5 rounded-lg hover:bg-custom-purple/90 transition-colors cursor-pointer"
+                >
+                  Start new application
+                </button>
+              </div>
             </div>
           </div>
         </div>
