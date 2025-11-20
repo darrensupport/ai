@@ -543,7 +543,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
             ) : (
               <div className="h-full flex items-center justify-center border-4 border-black px-4">
                 <div
-                  className="relative h-full max-h-[calc(100vh-12rem)] rounded-lg overflow-y-auto shadow-2xl bg-white"
+                  className="relative h-full max-h-[calc(100vh-12rem)] rounded-lg overflow-auto shadow-2xl bg-white"
                   tabIndex={0}
                   onKeyDown={handleKeyboardInput}
                   onKeyUp={handleKeyboardInput}
@@ -553,7 +553,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className="h-full object-contain bg-white overflow-y-auto overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
+                    className="h-full w-full object-contain bg-white overflow-auto overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}
