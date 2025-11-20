@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 
 // Image assets from Figma
-const imgImage2 = "/nava_image.png";
+const imgImage2 = "/illustration-cropped.png";
 
 export default function LandingPage() {
   const router = useRouter();
@@ -14,14 +14,14 @@ export default function LandingPage() {
       <div className="p-4 sm:p-6 md:p-8 lg:px-16 xl:px-32 2xl:px-[200px] pt-16 md:pt-24 lg:pt-4">
         {/* Hero Section */}
         <div className="relative bg-[#f4e4f0] dark:bg-[#1a0b1a] rounded-[25px] mb-6 sm:mb-8 overflow-hidden">
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between md:min-h-[351px]">
+          <div className="flex flex-col md:flex-row md:items-end md:justify-between md:min-h-[351px]">
             {/* Image Container - On top for mobile, right side for desktop */}
             <div className="order-1 md:order-2 w-full md:w-auto md:flex-shrink-0">
               <div className="relative h-[200px] sm:h-[250px] md:h-[337px] w-full md:w-[350px] lg:w-[439px]">
                 <div className="absolute inset-0 mix-blend-normal overflow-hidden pointer-events-none opacity-80 brightness-100 contrast-110 dark:opacity-60 dark:brightness-75 dark:contrast-120">
                   <Image
                     alt=""
-                    className="absolute h-full w-full object-cover md:left-[-21.65%] md:w-[136.47%]"
+                    className="absolute h-full w-full object-cover top-4 md:top-0 md:left-[-45%] md:w-[136.47%]"
                     src={imgImage2}
                     fill
                     style={{ objectFit: 'cover' }}
