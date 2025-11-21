@@ -541,27 +541,29 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="min-h-screen flex items-center justify-center border-4 border-black px-4">
-                {/* Scroll container */}
+              <div className="h-full w-full flex items-center justify-center px-4 py-4">
+                {/* Responsive container with scroll when needed */}
                 <div
-                  className="relative max-h-[calc(100vh-12rem)] w-full overflow-auto rounded-lg shadow-2xl bg-white
+                  className="relative w-full max-w-7xl max-h-[calc(100vh-8rem)] overflow-auto rounded-lg shadow-2xl bg-white
                             overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
                   tabIndex={0}
                   onKeyDown={handleKeyboardInput}
                   onKeyUp={handleKeyboardInput}
                 >
-                  {/* Make the canvas bigger than the container to force overflow */}
-                  <canvas
-                    ref={canvasRef}
-                    id="browser-artifact-canvas"
-                    width={1920}
-                    height={1080}
-                    className="block w-full h-full bg-white" 
-                    onClick={handleCanvasInteraction}
-                    onMouseMove={handleCanvasInteraction}
-                    onWheel={handleCanvasInteraction}
-                    onContextMenu={(e) => e.preventDefault()}
-                  />
+                  {/* Responsive canvas that maintains aspect ratio */}
+                  <div className="w-full aspect-video min-w-[320px]">
+                    <canvas
+                      ref={canvasRef}
+                      id="browser-artifact-canvas"
+                      width={1920}
+                      height={1080}
+                      className="w-full h-full object-contain bg-white" 
+                      onClick={handleCanvasInteraction}
+                      onMouseMove={handleCanvasInteraction}
+                      onWheel={handleCanvasInteraction}
+                      onContextMenu={(e) => e.preventDefault()}
+                    />
+                  </div>
                 </div>
               </div>
             )}
