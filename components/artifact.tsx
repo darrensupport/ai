@@ -107,6 +107,16 @@ function PureArtifact({
 
   const { open: isSidebarOpen } = useSidebar();
 
+  // Sync browser sheet open state to global metadata so other components can access it
+  useEffect(() => {
+    if (artifact.kind === 'browser') {
+      setMetadata((current: any) => ({
+        ...current,
+        isSheetOpen: isBrowserSheetOpen,
+      }));
+    }
+  }, [artifact.kind, isBrowserSheetOpen, setMetadata]);
+
   useEffect(() => {
     if (documents && documents.length > 0) {
       const mostRecentDocument = documents.at(-1);

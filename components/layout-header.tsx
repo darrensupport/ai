@@ -1,14 +1,15 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { PlusIcon, SidebarLeftIcon } from '@/components/icons';
+import { PlusIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { closeArtifact, useArtifact } from '@/hooks/use-artifact';
+import { SidebarToggle } from '@/components/sidebar-toggle';
 
 export function LayoutHeader() {
-  const { state, toggleSidebar, openMobile } = useSidebar();
+  const { state, openMobile } = useSidebar();
   const router = useRouter();
   const { setArtifact, artifact, metadata } = useArtifact();
 
@@ -27,40 +28,12 @@ export function LayoutHeader() {
     <>
       {/* Mobile/Tablet: Just the toggle button at the top */}
       <div className="lg:hidden fixed left-4 top-4 z-[100]">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              data-testid="sidebar-toggle-button"
-              onClick={toggleSidebar}
-              variant="outline"
-              className="size-10 p-0 bg-background border-sidebar-border hover:bg-custom-purple/20 shadow-md"
-            >
-              <SidebarLeftIcon size={18} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent align="start" side="right" sideOffset={8}>
-            Toggle Sidebar
-          </TooltipContent>
-        </Tooltip>
+        <SidebarToggle />
       </div>
 
       {/* Desktop: Full sidebar strip with both buttons */}
       <div className="hidden lg:flex fixed left-0 top-0 w-[50px] h-screen bg-sidebar flex-col items-center py-4 gap-4 z-[100]">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <Button
-              data-testid="sidebar-toggle-button"
-              onClick={toggleSidebar}
-              variant="outline"
-              className="size-8 p-0 bg-background border-sidebar-border hover:bg-custom-purple/20"
-            >
-              <SidebarLeftIcon size={16} />
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent align="start" side="right" sideOffset={8}>
-            Toggle Sidebar
-          </TooltipContent>
-        </Tooltip>
+        <SidebarToggle />
 
         <Tooltip>
           <TooltipTrigger asChild>

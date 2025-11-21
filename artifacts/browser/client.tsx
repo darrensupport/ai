@@ -2,7 +2,7 @@ import { Artifact } from '@/components/create-artifact';
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick, ClockFading, Maximize2 } from 'lucide-react';
+import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick, ClockFading, Maximize2, ArrowLeftIcon } from 'lucide-react';
 import { toast } from 'sonner';
 import { useIsMobile } from '@/hooks/use-mobile';
 import {
@@ -251,13 +251,14 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
         data: { mode }
       }));
 
-      // Automatically enable fullscreen when switching to user mode
+      // On mobile, keep the sheet open when switching to user mode
+      // On desktop, automatically enable fullscreen when switching to user mode
       if (mode === 'user') {
         setMetadata(prev => ({
           ...prev,
           controlMode: mode,
           isFocused: true,
-          isFullscreen: true
+          isFullscreen: isMobile ? false : true
         }));
       } else {
         setMetadata(prev => ({
@@ -419,16 +420,65 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       if (lastFrame && canvasRef.current && metadata?.controlMode) {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        if (ctx) {
-          const img = new Image();
-          img.onload = () => {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        
+        // Make canvas responsive in fullscreen mode
+        if (metadata?.isFullscreen && metadata?.controlMode === 'user') {
+          const updateCanvasSize = () => {
+            // Get viewport dimensions
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            
+            // Calculate available space (accounting for header)
+            const headerHeight = 80; // Approximate header height
+            const availableHeight = viewportHeight - headerHeight;
+            
+            // Maintain 16:9 aspect ratio
+            const aspectRatio = 16 / 9;
+            let canvasWidth = viewportWidth;
+            let canvasHeight = viewportWidth / aspectRatio;
+            
+            // If height exceeds available space, constrain by height
+            if (canvasHeight > availableHeight) {
+              canvasHeight = availableHeight;
+              canvasWidth = canvasHeight * aspectRatio;
+            }
+            
+            // Set canvas dimensions
+            canvas.width = Math.floor(canvasWidth);
+            canvas.height = Math.floor(canvasHeight);
           };
-          img.src = `data:image/jpeg;base64,${lastFrame}`;
+          
+          updateCanvasSize();
+          window.addEventListener('resize', updateCanvasSize);
+          
+          if (ctx) {
+            const img = new Image();
+            img.onload = () => {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = `data:image/jpeg;base64,${lastFrame}`;
+          }
+          
+          return () => {
+            window.removeEventListener('resize', updateCanvasSize);
+          };
+        } else {
+          // Default canvas size for non-fullscreen mode
+          canvas.width = 1920;
+          canvas.height = 1080;
+          
+          if (ctx) {
+            const img = new Image();
+            img.onload = () => {
+              ctx.clearRect(0, 0, canvas.width, canvas.height);
+              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            };
+            img.src = `data:image/jpeg;base64,${lastFrame}`;
+          }
         }
       }
-    }, [metadata?.controlMode, lastFrame]);
+    }, [metadata?.controlMode, metadata?.isFullscreen, lastFrame]);
 
     // Global keyboard listener for fullscreen mode
     useEffect(() => {
@@ -639,11 +689,11 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                className="size-full object-contain bg-white browser-canvas-regular rounded-lg"
-                onClick={handleCanvasInteraction}
-                onMouseMove={handleCanvasInteraction}
-                onWheel={handleCanvasInteraction}
-                onContextMenu={(e) => {
+                    className="size-full object-contain bg-white browser-canvas-regular rounded-lg"
+                    onClick={handleCanvasInteraction}
+                    onMouseMove={handleCanvasInteraction}
+                    onWheel={handleCanvasInteraction}
+                    onContextMenu={(e) => {
                   if (metadata.controlMode === 'user') {
                     e.preventDefault(); // Allow right-click handling
                   }
@@ -691,20 +741,31 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
               {metadata.isConnected && (
                 <div className="flex items-center justify-between py-2 px-4 bg-muted/20">
                   <div className="flex items-center gap-2">
-                    <div className="size-2 bg-green-500 rounded-full animate-pulse flex-shrink-0" />
-                    <span className="text-xs font-ibm-plex-mono">AI is working</span>
+                    <div className={`size-2 rounded-full animate-pulse flex-shrink-0 ${
+                      metadata.controlMode === 'user' ? 'bg-red-500' : 'bg-green-500'
+                    }`} />
+                    <span className="text-xs font-ibm-plex-mono">
+                      {metadata.controlMode === 'user' ? "You're editing manually" : 'AI is working'}
+                    </span>
                   </div>
                   <Button
-                    variant={metadata.controlMode === 'user' ? 'default' : 'outline'}
+                    variant="outline"
                     size="sm"
                     onClick={() => {
-                      switchControlMode('user');
-                      metadata?.setIsSheetOpen?.(false);
+                      switchControlMode(metadata.controlMode === 'user' ? 'agent' : 'user');
                     }}
                     className="px-3 py-2 rounded text-xs font-medium border-0 hover:bg-custom-purple/90 bg-custom-purple text-white"
                   >
-                    <MousePointerClick className="w-4 h-4 mr-1" />
-                    Take control
+                    {metadata.controlMode === 'user' ? (
+                      <div className="flex items-center gap-2 text-white">
+                        Give back control
+                      </div>
+                    ) : (
+                      <>
+                        <MousePointerClick className="w-4 h-4 mr-1" />
+                        Take control
+                      </>
+                    )}
                   </Button>
                 </div>
               )}
@@ -757,7 +818,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 ) : (
                   <div className="flex items-center justify-center">
                     <div
-                      className="relative w-full max-w-[1920px] bg-white rounded-lg shadow-lg overflow-hidden aspect-video"
+                      className="relative w-full max-w-[1920px] bg-white rounded-lg shadow-lg overflow-auto overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
                       tabIndex={metadata.controlMode === 'user' ? 0 : -1}
                       onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
                       onKeyUp={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
@@ -773,18 +834,18 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                         width={1920}
                         height={1080}
                         className="w-full h-full object-contain bg-white"
-                    onClick={handleCanvasInteraction}
-                    onMouseMove={handleCanvasInteraction}
-                    onWheel={handleCanvasInteraction}
-                    onContextMenu={(e) => {
-                      if (metadata.controlMode === 'user') {
-                        e.preventDefault(); // Allow right-click handling
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            )}
+                        onClick={handleCanvasInteraction}
+                        onMouseMove={handleCanvasInteraction}
+                        onWheel={handleCanvasInteraction}
+                        onContextMenu={(e) => {
+                          if (metadata.controlMode === 'user') {
+                            e.preventDefault(); // Allow right-click handling
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </SheetContent>
           </Sheet>
