@@ -420,65 +420,16 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       if (lastFrame && canvasRef.current && metadata?.controlMode) {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext('2d');
-        
-        // Make canvas responsive in fullscreen mode
-        if (metadata?.isFullscreen && metadata?.controlMode === 'user') {
-          const updateCanvasSize = () => {
-            // Get viewport dimensions
-            const viewportWidth = window.innerWidth;
-            const viewportHeight = window.innerHeight;
-            
-            // Calculate available space (accounting for header)
-            const headerHeight = 80; // Approximate header height
-            const availableHeight = viewportHeight - headerHeight;
-            
-            // Maintain 16:9 aspect ratio
-            const aspectRatio = 16 / 9;
-            let canvasWidth = viewportWidth;
-            let canvasHeight = viewportWidth / aspectRatio;
-            
-            // If height exceeds available space, constrain by height
-            if (canvasHeight > availableHeight) {
-              canvasHeight = availableHeight;
-              canvasWidth = canvasHeight * aspectRatio;
-            }
-            
-            // Set canvas dimensions
-            canvas.width = Math.floor(canvasWidth);
-            canvas.height = Math.floor(canvasHeight);
+        if (ctx) {
+          const img = new Image();
+          img.onload = () => {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           };
-          
-          updateCanvasSize();
-          window.addEventListener('resize', updateCanvasSize);
-          
-          if (ctx) {
-            const img = new Image();
-            img.onload = () => {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            };
-            img.src = `data:image/jpeg;base64,${lastFrame}`;
-          }
-          
-          return () => {
-            window.removeEventListener('resize', updateCanvasSize);
-          };
-        } else {
-          // Default canvas size for non-fullscreen mode
-          canvas.width = 1920;
-          canvas.height = 1080;
-          
-          if (ctx) {
-            const img = new Image();
-            img.onload = () => {
-              ctx.clearRect(0, 0, canvas.width, canvas.height);
-              ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-            };
-            img.src = `data:image/jpeg;base64,${lastFrame}`;
-          }
+          img.src = `data:image/jpeg;base64,${lastFrame}`;
         }
       }
-    }, [metadata?.controlMode, metadata?.isFullscreen, lastFrame]);
+    }, [metadata?.controlMode, lastFrame]);
 
     // Global keyboard listener for fullscreen mode
     useEffect(() => {
@@ -600,13 +551,12 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                   onKeyDown={handleKeyboardInput}
                   onKeyUp={handleKeyboardInput}
                 >
-                  {/* Make the canvas bigger than the container to force overflow */}
                   <canvas
                     ref={canvasRef}
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className="block w-[1920px] h-[1080px] bg-white" 
+                    className="block w-full max-w-[768px] md:max-w-[1024px] lg:max-w-[1920px] h-auto aspect-video bg-white"
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}

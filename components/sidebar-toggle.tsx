@@ -32,7 +32,6 @@ export function SidebarToggle({
             "md:px-2 md:h-fit hover:bg-custom-purple/20",
             isSheetOpen && "opacity-30 cursor-not-allowed pointer-events-auto bg-gray-100 dark:bg-gray-800"
           )}
-          disabled={isSheetOpen}
         >
           <SidebarLeftIcon size={16} />
         </Button>
