@@ -73,7 +73,6 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
 
   content: ({ metadata, setMetadata, isCurrentVersion, status }) => {
     const [lastFrame, setLastFrame] = useState<string | null>(null);
-    const [viewportSize, setViewportSize] = useState({ width: 1920, height: 1080 });
     const isMobile = useIsMobile();
   
     const wsRef = useRef<WebSocket | null>(null);
@@ -432,24 +431,6 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       }
     }, [metadata?.controlMode, lastFrame]);
 
-    // Handle viewport resize for responsive canvas
-    useEffect(() => {
-      const handleResize = () => {
-        if (metadata?.isFullscreen) {
-          setViewportSize({
-            width: window.innerWidth,
-            height: window.innerHeight,
-          });
-        }
-      };
-
-      if (metadata?.isFullscreen) {
-        handleResize(); // Set initial size
-        window.addEventListener('resize', handleResize);
-        return () => window.removeEventListener('resize', handleResize);
-      }
-    }, [metadata?.isFullscreen]);
-
     // Global keyboard listener for fullscreen mode
     useEffect(() => {
       const handleGlobalKeyDown = (event: KeyboardEvent) => {
@@ -561,7 +542,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="w-full h-full flex items-center justify-center overflow-auto overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]">
+              <div className="w-full h-full flex items-center justify-center overflow-auto overscroll-contain touch-action:pan-y_pan-x [-webkit-overflow-scrolling:touch]">
                 <div
                   className="relative rounded-lg shadow-2xl bg-white min-w-0"
                   tabIndex={0}
@@ -787,7 +768,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 ) : (
                   <div className="flex items-center justify-center">
                     <div
-                      className="relative w-full max-w-[768px] bg-white rounded-lg shadow-lg overflow-y-scroll overscroll-contain touch-pan-y [-webkit-overflow-scrolling:touch]"
+                      className="relative w-full max-w-[768px] bg-white rounded-lg shadow-lg overflow-y-scroll overscroll-contain touch-action:pan-y_pan-x [-webkit-overflow-scrolling:touch]"
                       tabIndex={metadata.controlMode === 'user' ? 0 : -1}
                       onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
                       onKeyUp={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
