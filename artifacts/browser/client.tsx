@@ -377,6 +377,78 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       });
     };
 
+    const handleTouchInput = (event: React.TouchEvent) => {
+      if (metadata?.controlMode !== 'user' || !metadata.isFocused) return;
+      
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      // Prevent default to avoid scrolling and other browser behaviors
+      event.preventDefault();
+
+      const rect = canvas.getBoundingClientRect();
+      
+      // Calculate the actual rendered size of the 16:9 video within the canvas element
+      const videoAspectRatio = 16 / 9;
+      let renderedWidth = rect.width;
+      let renderedHeight = rect.height;
+
+      if (rect.width / rect.height > videoAspectRatio) {
+        // Letterboxed (empty space on sides)
+        renderedWidth = rect.height * videoAspectRatio;
+      } else {
+        // Pillarboxed (empty space on top/bottom)
+        renderedHeight = rect.width / videoAspectRatio;
+      }
+
+      // Calculate the offset of the rendered video within the canvas
+      const offsetX = (rect.width - renderedWidth) / 2;
+      const offsetY = (rect.height - renderedHeight) / 2;
+
+      // Calculate scaling factors based on the actual rendered size
+      const scaleX = canvas.width / renderedWidth;
+      const scaleY = canvas.height / renderedHeight;
+
+      // Get the first touch point (primary touch)
+      const touch = event.touches[0] || event.changedTouches[0];
+      if (!touch) return;
+
+      const touchX = touch.clientX - rect.left;
+      const touchY = touch.clientY - rect.top;
+
+      // Check if the touch is outside the rendered video area
+      if (touchX < offsetX || touchX > offsetX + renderedWidth || touchY < offsetY || touchY > offsetY + renderedHeight) {
+        // Touch was in the letterboxed/pillarboxed area, so ignore it
+        return;
+      }
+
+      // Calculate the final coordinates within the browser's viewport
+      const finalX = (touchX - offsetX) * scaleX;
+      const finalY = (touchY - offsetY) * scaleY;
+
+      if (event.type === 'touchstart') {
+        // Convert touchstart to click
+        sendUserInput({
+          type: 'click',
+          x: finalX,
+          y: finalY,
+          button: 'left'
+        });
+      } else if (event.type === 'touchmove') {
+        // Convert touchmove to mousemove (throttled)
+        const now = Date.now();
+        if (now - lastMoveEventRef.current > 50) { // Send updates every 50ms
+          lastMoveEventRef.current = now;
+          sendUserInput({
+            type: 'mousemove',
+            x: finalX,
+            y: finalY
+          });
+        }
+      }
+      // touchend doesn't need to send anything as touchstart already sent the click
+    };
+
 
 
     const handleBrowserFrame = (frame: BrowserFrame) => {
@@ -393,6 +465,10 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       const canvas = canvasRef.current;
       if (canvas) {
         const ctx = canvas.getContext('2d');
+        if (metadata?.isFullscreen) {
+          console.log('Setting touch action to auto');
+          canvas.style.touchAction = 'auto';
+        }
         if (ctx) {
           const img = new Image();
           img.onload = () => {
@@ -560,6 +636,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}
+                    onTouchStart={handleTouchInput}
+                    onTouchMove={handleTouchInput}
+                    onTouchEnd={handleTouchInput}
                     onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
@@ -643,6 +722,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}
+                    onTouchStart={handleTouchInput}
+                    onTouchMove={handleTouchInput}
+                    onTouchEnd={handleTouchInput}
                     onContextMenu={(e) => {
                   if (metadata.controlMode === 'user') {
                     e.preventDefault(); // Allow right-click handling
@@ -787,6 +869,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                         onClick={handleCanvasInteraction}
                         onMouseMove={handleCanvasInteraction}
                         onWheel={handleCanvasInteraction}
+                        onTouchStart={handleTouchInput}
+                        onTouchMove={handleTouchInput}
+                        onTouchEnd={handleTouchInput}
                         onContextMenu={(e) => {
                           if (metadata.controlMode === 'user') {
                             e.preventDefault(); // Allow right-click handling
