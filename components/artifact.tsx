@@ -103,8 +103,19 @@ function PureArtifact({
   const [mode, setMode] = useState<'edit' | 'diff'>('edit');
   const [document, setDocument] = useState<Document | null>(null);
   const [currentVersionIndex, setCurrentVersionIndex] = useState(-1);
+  const [isBrowserSheetOpen, setIsBrowserSheetOpen] = useState(false);
 
   const { open: isSidebarOpen } = useSidebar();
+
+  // Sync browser sheet open state to global metadata so other components can access it
+  useEffect(() => {
+    if (artifact.kind === 'browser') {
+      setMetadata((current: any) => ({
+        ...current,
+        isSheetOpen: isBrowserSheetOpen,
+      }));
+    }
+  }, [artifact.kind, isBrowserSheetOpen, setMetadata]);
 
   useEffect(() => {
     if (documents && documents.length > 0) {
@@ -235,7 +246,7 @@ function PureArtifact({
       : true;
 
   const { width: windowWidth, height: windowHeight } = useWindowSize();
-  const isMobile = windowWidth ? windowWidth < 768 : false;
+  const isMobile = windowWidth ? windowWidth < 1024 : false;
 
   const artifactDefinition = artifactDefinitions.find(
     (definition) => definition.kind === artifact.kind,
@@ -290,31 +301,47 @@ function PureArtifact({
             />
           )}
 
-          {!isMobile && !(artifact.kind === 'browser' && metadata?.isFullscreen) && (
+          {!(artifact.kind === 'browser' && metadata?.isFullscreen) && (
             <motion.div
-              className="relative w-[450px] min-w-[400px] max-w-[500px] bg-white dark:bg-[#1a0b1a] h-dvh shrink-0 pointer-events-auto"
-              initial={{ 
-                opacity: 0, 
-                x: isSidebarOpen ? 265 + 10 : 50 + 10, 
-                scale: 1 
-              }}
-              animate={{
-                opacity: 1,
-                x: isSidebarOpen ? 265 : 50,
-                scale: 1,
-                transition: {
-                  delay: 0.2,
-                  type: 'spring',
-                  stiffness: 200,
-                  damping: 30,
-                },
-              }}
-              exit={{
-                opacity: 0,
-                x: isSidebarOpen ? 265 : 50,
-                scale: 1,
-                transition: { duration: 0 },
-              }}
+              className={`relative bg-white dark:bg-[#1a0b1a] h-dvh shrink-0 pointer-events-auto ${
+                isMobile 
+                  ? 'w-full' 
+                  : 'w-[450px] min-w-[400px] max-w-[500px]'
+              }`}
+              initial={
+                isMobile
+                  ? { opacity: 1, x: 0 }
+                  : { 
+                      opacity: 0, 
+                      x: isSidebarOpen ? 265 + 10 : 50 + 10, 
+                      scale: 1 
+                    }
+              }
+              animate={
+                isMobile
+                  ? { opacity: 1, x: 0 }
+                  : {
+                      opacity: 1,
+                      x: isSidebarOpen ? 265 : 50,
+                      scale: 1,
+                      transition: {
+                        delay: 0.2,
+                        type: 'spring',
+                        stiffness: 200,
+                        damping: 30,
+                      },
+                    }
+              }
+              exit={
+                isMobile
+                  ? { opacity: 0 }
+                  : {
+                      opacity: 0,
+                      x: isSidebarOpen ? 265 : 50,
+                      scale: 1,
+                      transition: { duration: 0 },
+                    }
+              }
             >
               <AnimatePresence>
                 {!isCurrentVersion && (
@@ -335,7 +362,7 @@ function PureArtifact({
                   artifactKind={artifact.kind}
                   metadata={metadata}
                 />
-                <div className="flex-1 overflow-hidden">
+                <div className="flex-1 overflow-y-scroll">
                   <ArtifactMessages
                     chatId={chatId}
                     status={status}
@@ -347,7 +374,7 @@ function PureArtifact({
                     artifactStatus={artifact.status}
                   />
                 </div>
-                <div className="border-t border-gray-200 bg-[#EFD9E9] dark:bg-[#1a0b1a] p-[18px]">
+                <div className="border-t border-gray-200 bg-[#EFD9E9] dark:bg-[#1a0b1a] p-3 sm:p-[18px] sm:pb-[18px]">
                   <form className="flex gap-2 w-full">
                     <MultimodalInput
                       chatId={chatId}
@@ -369,27 +396,29 @@ function PureArtifact({
             </motion.div>
           )}
 
-          <motion.div
-            className="fixed dark:bg-muted bg-background h-dvh flex flex-col overflow-y-scroll md:border-l dark:border-zinc-700 border-zinc-200 pointer-events-auto"
-            initial={
-              isMobile
-                ? {
-                    opacity: 1,
-                    x: artifact.boundingBox.left,
-                    y: artifact.boundingBox.top,
-                    height: artifact.boundingBox.height,
-                    width: artifact.boundingBox.width,
-                    borderRadius: 50,
-                  }
-                : {
-                    opacity: 1,
-                    x: artifact.boundingBox.left,
-                    y: artifact.boundingBox.top,
-                    height: artifact.boundingBox.height,
-                    width: artifact.boundingBox.width,
-                    borderRadius: 50,
-                  }
-            }
+          {/* On mobile, browser artifacts use a drawer instead of the full artifact container */}
+          {!(isMobile && artifact.kind === 'browser' && !metadata?.isFullscreen) && (
+            <motion.div
+              className="fixed dark:bg-muted bg-background h-dvh flex flex-col overflow-y-scroll md:border-l dark:border-zinc-700 border-zinc-200 pointer-events-auto"
+              initial={
+                isMobile
+                  ? {
+                      opacity: 1,
+                      x: artifact.boundingBox.left,
+                      y: artifact.boundingBox.top,
+                      height: artifact.boundingBox.height,
+                      width: artifact.boundingBox.width,
+                      borderRadius: 50,
+                    }
+                  : {
+                      opacity: 1,
+                      x: artifact.boundingBox.left,
+                      y: artifact.boundingBox.top,
+                      height: artifact.boundingBox.height,
+                      width: artifact.boundingBox.width,
+                      borderRadius: 50,
+                    }
+              }
             animate={
               isMobile
                 ? {
@@ -502,6 +531,32 @@ function PureArtifact({
               )}
             </AnimatePresence>
           </motion.div>
+          )}
+
+          {/* Render browser artifact content for mobile (as floating button + drawer) */}
+          {isMobile && artifact.kind === 'browser' && !metadata?.isFullscreen && artifactDefinition && (
+            <div className="pointer-events-auto overflow-y-scroll">
+              <artifactDefinition.content
+                title={artifact.title}
+                content={artifact.content}
+                mode={mode}
+                status={artifact.status}
+                currentVersionIndex={currentVersionIndex}
+                suggestions={[]}
+                onSaveContent={saveContent}
+                isInline={false}
+                isCurrentVersion={isCurrentVersion}
+                getDocumentContentById={getDocumentContentById}
+                isLoading={isDocumentsFetching && !artifact.content}
+                metadata={{
+                  ...metadata,
+                  isSheetOpen: isBrowserSheetOpen,
+                  setIsSheetOpen: setIsBrowserSheetOpen,
+                }}
+                setMetadata={setMetadata}
+              />
+            </div>
+          )}
 
         </motion.div>
       )}

@@ -36,20 +36,20 @@ export function BenefitApplicationsLanding({
   setMessages,
 }: BenefitApplicationsLandingProps) {
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-8 bg-chat-background">
-      <div className="max-w-4xl w-full text-left">
+    <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 md:p-8 lg:p-8 pt-16 lg:pt-8 bg-chat-background">
+      <div className="max-w-4xl w-full text-left px-2 sm:px-4">
         {/* Main Title */}
-        <h1 className="text-[64px] font-source-serif leading-[1.15] text-black dark:text-white mb-12">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-[64px] font-source-serif leading-[1.15] text-black dark:text-white mb-6 sm:mb-8 md:mb-12">
           Let&apos;s start a new application.
         </h1>
 
         {/* Subheader */}
-        <h2 className="text-2xl font-inter text-black dark:text-white mb-12">
+        <h2 className="text-lg sm:text-xl md:text-2xl font-inter text-black dark:text-white mb-6 sm:mb-8 md:mb-12">
           What&apos;s your client&apos;s name and which program do they need?
         </h2>
 
         {/* Input Form */}
-        <div className="mb-8 max-w-4xl mx-auto">
+        <div className="mb-4 sm:mb-6 md:mb-8 max-w-4xl mx-auto">
           <MultimodalInput
             chatId={chatId}
             input={input}

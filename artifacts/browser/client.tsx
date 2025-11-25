@@ -2,8 +2,15 @@ import { Artifact } from '@/components/create-artifact';
 import { useEffect, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick, ClockFading } from 'lucide-react';
+import { MonitorX, Loader2, RefreshCwIcon, Monitor, MousePointerClick, ClockFading, Maximize2, ArrowLeftIcon } from 'lucide-react';
 import { toast } from 'sonner';
+import { useIsMobile } from '@/hooks/use-mobile';
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+} from '@/components/ui/sheet';
 
 interface BrowserFrame {
   type: 'frame';
@@ -22,6 +29,8 @@ interface BrowserArtifactMetadata {
   controlMode: 'agent' | 'user';
   isFocused: boolean;
   isFullscreen: boolean;
+  isSheetOpen?: boolean;
+  setIsSheetOpen?: (open: boolean) => void;
 }
 
 export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>({
@@ -64,6 +73,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
 
   content: ({ metadata, setMetadata, isCurrentVersion, status }) => {
     const [lastFrame, setLastFrame] = useState<string | null>(null);
+    const isMobile = useIsMobile();
   
     const wsRef = useRef<WebSocket | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -241,13 +251,14 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
         data: { mode }
       }));
 
-      // Automatically enable fullscreen when switching to user mode
+      // On mobile, keep the sheet open when switching to user mode
+      // On desktop, automatically enable fullscreen when switching to user mode
       if (mode === 'user') {
         setMetadata(prev => ({
           ...prev,
           controlMode: mode,
           isFocused: true,
-          isFullscreen: true
+          isFullscreen: isMobile ? false : true
         }));
       } else {
         setMetadata(prev => ({
@@ -459,23 +470,23 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
     // Fullscreen mode when in user control mode
     if (metadata.controlMode === 'user' && metadata.isFullscreen) {
       return (
-        <div className="fixed inset-0 z-50 browser-fullscreen-bg">
+        <div className="fixed inset-0 z-50 browser-fullscreen-bg flex flex-col overflow-hidden">
           {/* Fullscreen header with controls */}
-          <div className="absolute top-0 left-0 right-0 z-10 browser-fullscreen-bg">
-            <div className="flex items-center justify-between px-4 py-3">
+          <div className="sticky top-0 left-0 right-0 z-10 browser-fullscreen-bg">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-2 sm:px-4 py-2 sm:py-3 gap-2">
             <div className="flex flex-col gap-1 text-white">
                 <div className="flex items-center gap-2">
                   <div className="size-2 bg-red-500 rounded-full animate-pulse status-indicator" />
-                  <span className="text-sm font-medium font-ibm-plex-mono">You're editing manually</span>
+                  <span className="text-xs sm:text-sm font-medium font-ibm-plex-mono">You're editing manually</span>
                 </div>
-                <span className="text-sm text-gray-400 font-inter">The AI will continue with your changes when you give back control.</span>
+                <span className="text-xs sm:text-sm text-gray-400 font-inter hidden sm:block">The AI will continue with your changes when you give back control.</span>
               </div>
               <div className="flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="sm"
                   onClick={() => switchControlMode('agent')}
-                  className="px-4 py-2.5 rounded text-sm font-medium leading-5 border-0 hover:bg-custom-purple/90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-custom-purple"
+                  className="px-3 sm:px-4 py-2 sm:py-2.5 rounded text-xs sm:text-sm font-medium leading-5 border-0 hover:bg-custom-purple/90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-custom-purple"
                 >
                   <div className="flex items-center gap-2 text-white">
                     Give back control
@@ -486,7 +497,7 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
           </div>
 
           {/* Fullscreen browser canvas */}
-          <div className="absolute inset-0 pt-20 pb-12 px-12 browser-fullscreen-bg">
+          <div className="flex-1 overflow-hidden browser-fullscreen-bg pt-20 pb-4 sm:pb-12 px-2 sm:px-4 md:px-12">
             {metadata.error ? (
               <div className="flex items-center justify-center h-full bg-gray-50 text-gray-500 font-inter">
                 <div className="text-center">
@@ -509,13 +520,13 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 <div className="text-center">
                   {metadata.isConnecting ? (
                     <>
-                      <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
-                      <p className="text-sm">Connecting to browser...</p>
+                      <Loader2 className="size-6 sm:size-8 mx-auto mb-2 animate-spin" />
+                      <p className="text-xs sm:text-sm">Connecting to browser...</p>
                     </>
                   ) : (
                     <>
-                      <ClockFading className="size-8 mx-auto mb-2" />
-                      <p className="text-sm font-medium">Your session was paused due to inactivity</p>
+                      <ClockFading className="size-6 sm:size-8 mx-auto mb-2" />
+                      <p className="text-xs sm:text-sm font-medium">Your session was paused due to inactivity</p>
                       <p className="text-xs opacity-75">Refresh the connection and try again</p>
                       <Button
                         variant="outline"
@@ -531,9 +542,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                 </div>
               </div>
             ) : (
-              <div className="h-full flex items-center justify-center border-4 border-black px-4">
+              <div className="w-full h-full flex items-center justify-center overflow-auto overscroll-contain touch-action:pan-y_pan-x [-webkit-overflow-scrolling:touch]">
                 <div
-                  className="relative h-full max-h-[calc(100vh-12rem)] rounded-lg overflow-hidden shadow-2xl bg-white"
+                  className="relative rounded-lg shadow-2xl bg-white min-w-0"
                   tabIndex={0}
                   onKeyDown={handleKeyboardInput}
                   onKeyUp={handleKeyboardInput}
@@ -543,13 +554,13 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className="h-full object-contain bg-white"
+                    className={`block w-full h-auto max-w-full object-contain bg-white ${
+                      isMobile ? 'min-w-full' : ''
+                    } max-w-[1920px] max-h-[1080px]`}
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}
-                    onContextMenu={(e) => {
-                      e.preventDefault(); // Allow right-click handling
-                    }}
+                    onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
               </div>
@@ -559,40 +570,9 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
       );
     }
 
-          return (
-        <div className="h-full flex flex-col">
-          {/* Connection status indicator */}
-          {metadata.isConnecting && (
-            <div className="flex items-center justify-center py-2 text-sm text-muted-foreground bg-muted/30">
-              <Loader2 className="size-4 mr-2 animate-spin" />
-              Connecting to browser...
-            </div>
-          )}
-           
-          {/* Control mode indicator */}
-          {metadata.isConnected && (
-            <div className="flex items-center justify-between py-2 bg-muted/20">
-              <div className="flex items-center gap-2 text-sm">
-                  <div className="size-2 bg-green-500 rounded-full animate-pulse status-indicator" />
-                <span className="text-xs text-black font-ibm-plex-mono">AI is working</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant={metadata.controlMode === 'user' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => switchControlMode('user')}
-                  className="px-4 py-2.5 rounded text-sm font-medium leading-5 border-0 hover:bg-custom-purple/90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-custom-purple"
-                >
-                  <div className="flex items-center gap-2 text-white">
-                    <MousePointerClick className="w-5 h-5" />
-                    Take control
-                  </div>
-                </Button>
-              </div>
-            </div>
-          )}
-          {/* Main browser display area */}
-          <div className="flex-1 relative m-4">
+    // Render browser canvas content (reusable for both desktop and mobile drawer)
+    const renderBrowserContent = () => (
+      <>
             {metadata.error ? (
               <div className="absolute inset-0 flex items-center justify-center bg-gray-50 text-gray-500 font-inter">
                 <div className="text-center">
@@ -659,19 +639,207 @@ export const browserArtifact = new Artifact<'browser', BrowserArtifactMetadata>(
                     id="browser-artifact-canvas"
                     width={1920}
                     height={1080}
-                    className={`size-full object-contain bg-white browser-canvas-regular rounded-lg`}
+                    className="size-full object-contain bg-white browser-canvas-regular rounded-lg"
                     onClick={handleCanvasInteraction}
                     onMouseMove={handleCanvasInteraction}
                     onWheel={handleCanvasInteraction}
                     onContextMenu={(e) => {
-                      if (metadata.controlMode === 'user') {
-                        e.preventDefault(); // Allow right-click handling
-                      }
-                    }}
-                  />
+                  if (metadata.controlMode === 'user') {
+                    e.preventDefault(); // Allow right-click handling
+                  }
+                }}
+              />
+            </div>
+          </div>
+        )}
+      </>
+    );
+
+    // Mobile drawer mode - render as portal to not interfere with chat
+    if (isMobile) {
+      return (
+        <div className="pointer-events-none">
+          {/* Mobile: Floating button to open browser drawer - uses pointer-events-auto to be clickable */}
+          <div className="fixed top-4 right-4 z-[100] pointer-events-auto">
+            <Button
+              size="lg"
+              onClick={() => metadata?.setIsSheetOpen?.(true)}
+              className="rounded-full shadow-lg px-4 py-3 bg-custom-purple hover:bg-custom-purple/90 text-white"
+            >
+              <Monitor className="w-5 h-5 mr-2" />
+              View Browser
+            </Button>
+          </div>
+
+          {/* Mobile: Bottom sheet with browser content */}
+          <div className="pointer-events-auto">
+            <Sheet open={metadata?.isSheetOpen || false} onOpenChange={metadata?.setIsSheetOpen || (() => {})}>
+              <SheetContent side="bottom" className="h-[85vh] p-0 overflow-y-scroll flex flex-col z-[100]">
+              <SheetHeader className="px-4 py-3 border-b">
+                <SheetTitle className="text-left">Browser View</SheetTitle>
+              </SheetHeader>
+              
+              {/* Connection status indicator */}
+              {metadata.isConnecting && (
+                <div className="flex items-center justify-center py-2 px-2 text-xs bg-muted/30">
+                  <Loader2 className="size-4 mr-2 animate-spin flex-shrink-0" />
+                  <span className="truncate">Connecting to browser...</span>
                 </div>
+              )}
+              
+              {/* Control mode indicator */}
+              {metadata.isConnected && (
+                <div className="flex items-center justify-between py-2 px-4 bg-muted/20">
+                  <div className="flex items-center gap-2">
+                    <div className={`size-2 rounded-full animate-pulse flex-shrink-0 ${
+                      metadata.controlMode === 'user' ? 'bg-red-500' : 'bg-green-500'
+                    }`} />
+                    <span className="text-xs font-ibm-plex-mono">
+                      {metadata.controlMode === 'user' ? "You're editing manually" : 'AI is working'}
+                    </span>
+                  </div>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      switchControlMode(metadata.controlMode === 'user' ? 'agent' : 'user');
+                    }}
+                    className="px-3 py-2 rounded text-xs font-medium border-0 hover:bg-custom-purple/90 bg-custom-purple text-white"
+                  >
+                    {metadata.controlMode === 'user' ? (
+                      <div className="flex items-center gap-2 text-white">
+                        Give back control
+                      </div>
+                    ) : (
+                      <>
+                        <MousePointerClick className="w-4 h-4 mr-1" />
+                        Take control
+                      </>
+                    )}
+                  </Button>
+                </div>
+              )}
+
+              {/* Browser content with scroll */}
+              <div className="flex-1 overflow-y-scroll p-4">
+                {metadata.error ? (
+                  <div className="flex items-center justify-center min-h-[400px] bg-gray-50 text-gray-500 font-inter rounded-lg">
+                    <div className="text-center px-4">
+                      <MonitorX className="size-8 mx-auto mb-2" />
+                      <p className="text-sm font-medium">Failed to connect to browser</p>
+                      <p className="text-xs opacity-75">Wait a few moments and try again</p>
+                      <Button 
+                        variant="outline" 
+                        size="sm" 
+                        className="mt-2"
+                        onClick={connectToBrowserStream}
+                      >
+                        <RefreshCwIcon className="size-4 mr-1" />
+                        Retry
+                      </Button>
+                    </div>
+                  </div>
+                ) : !metadata.isConnected ? (
+                  <div className="flex items-center justify-center min-h-[400px] bg-gray-50 text-gray-500 rounded-lg">
+                    <div className="text-center px-4">
+                      {metadata.isConnecting ? (
+                        <>
+                          <Loader2 className="size-8 mx-auto mb-2 animate-spin" />
+                          <p className="text-sm">Connecting to browser...</p>
+                        </>
+                      ) : (
+                        <>
+                          <ClockFading className="size-8 mx-auto mb-2" />
+                          <p className="text-sm font-medium">Your session was paused due to inactivity</p>
+                          <p className="text-xs opacity-75">Refresh the connection and try again</p>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="mt-2"
+                            onClick={connectToBrowserStream}
+                          >
+                            <RefreshCwIcon className="size-4 mr-1" />
+                            Retry
+                          </Button>
+                        </>
+                      )}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex items-center justify-center">
+                    <div
+                      className="relative w-full max-w-[768px] bg-white rounded-lg shadow-lg overflow-y-scroll overscroll-contain touch-action:pan-y_pan-x [-webkit-overflow-scrolling:touch]"
+                      tabIndex={metadata.controlMode === 'user' ? 0 : -1}
+                      onKeyDown={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
+                      onKeyUp={metadata.controlMode === 'user' ? handleKeyboardInput : undefined}
+                      onClick={() => {
+                        if (metadata.controlMode === 'user' && !metadata.isFocused) {
+                          setMetadata(prev => ({ ...prev, isFocused: true }));
+                        }
+                      }}
+                    >
+                      <canvas
+                        ref={canvasRef}
+                        id="browser-artifact-canvas"
+                        width={768}
+                        height={432}
+                        className="object-contain bg-white"
+                        onClick={handleCanvasInteraction}
+                        onMouseMove={handleCanvasInteraction}
+                        onWheel={handleCanvasInteraction}
+                        onContextMenu={(e) => {
+                          if (metadata.controlMode === 'user') {
+                            e.preventDefault(); // Allow right-click handling
+                          }
+                        }}
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
-            )}
+            </SheetContent>
+          </Sheet>
+          </div>
+        </div>
+      );
+    }
+
+    // Desktop mode
+    return (
+      <div className="h-full flex flex-col">
+        {/* Connection status indicator */}
+        {metadata.isConnecting && (
+          <div className="flex items-center justify-center py-2 text-sm text-muted-foreground bg-muted/30">
+            <Loader2 className="size-4 mr-2 animate-spin" />
+            Connecting to browser...
+          </div>
+        )}
+         
+        {/* Control mode indicator */}
+        {metadata.isConnected && (
+          <div className="flex items-center justify-between py-2 bg-muted/20">
+            <div className="flex items-center gap-2 text-sm">
+                <div className="size-2 bg-green-500 rounded-full animate-pulse status-indicator" />
+              <span className="text-xs text-black font-ibm-plex-mono">AI is working</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Button
+                variant={metadata.controlMode === 'user' ? 'default' : 'outline'}
+                size="sm"
+                onClick={() => switchControlMode('user')}
+                className="px-4 py-2.5 rounded text-sm font-medium leading-5 border-0 hover:bg-custom-purple/90 focus:outline-none focus:ring-2 focus:ring-offset-2 bg-custom-purple"
+              >
+                <div className="flex items-center gap-2 text-white">
+                  <MousePointerClick className="w-5 h-5" />
+                  Take control
+                </div>
+              </Button>
+            </div>
+          </div>
+        )}
+        {/* Main browser display area */}
+        <div className="flex-1 relative m-4">
+          {renderBrowserContent()}
           </div>
         </div>
     );
