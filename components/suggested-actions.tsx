@@ -44,7 +44,7 @@ function PureSuggestedActions({
   return (
     <div
       data-testid="suggested-actions"
-      className="grid sm:grid-cols-2 gap-2 w-full"
+      className="grid sm:grid-cols-2 gap-2 w-full overflow-hidden"
     >
       {suggestedActions.map((suggestedAction, index) => (
         <motion.div
@@ -53,7 +53,7 @@ function PureSuggestedActions({
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
           key={`suggested-action-${suggestedAction.title}-${index}`}
-          className={index > 1 ? 'hidden sm:block' : 'block'}
+          className={`${index > 1 ? 'hidden sm:block' : 'block'} min-w-0`}
         >
           <Button
             variant="ghost"
@@ -65,10 +65,10 @@ function PureSuggestedActions({
                 parts: [{ type: 'text', text: suggestedAction.action }],
               });
             }}
-            className="text-left border border-sidebar-border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start transition-colors duration-200 bg-[#E8D0E0] hover:bg-[#DCC0D0] hover:text-black dark:bg-[#2D1B2E] dark:hover:bg-[#3D2A3E]"
+            className="text-left border border-sidebar-border rounded-xl px-3 sm:px-4 py-3 sm:py-3.5 text-sm gap-1 flex-col w-full h-auto justify-start items-start transition-colors duration-200 bg-[#E8D0E0] hover:bg-[#DCC0D0] hover:text-black dark:bg-[#2D1B2E] dark:hover:bg-[#3D2A3E] whitespace-normal overflow-hidden"
           >
-            <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground text-xs font-mono">
+            <span className="font-medium truncate max-w-full">{suggestedAction.title}</span>
+            <span className="text-muted-foreground text-xs font-mono truncate max-w-full">
               {suggestedAction.label}
             </span>
           </Button>
