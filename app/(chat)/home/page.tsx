@@ -9,7 +9,7 @@ const imgImage2 = "/illustration-cropped.png";
 export default function LandingPage() {
   const router = useRouter();
   return (
-    <div className="bg-white dark:bg-background relative min-h-screen">
+    <div className="bg-white dark:bg-background relative min-h-screen overflow-x-hidden">
       {/* Main Content Container */}
       <div className="p-4 sm:p-6 md:p-8 lg:px-16 xl:px-32 2xl:px-[200px] pt-16 md:pt-24 lg:pt-4">
         {/* Hero Section */}

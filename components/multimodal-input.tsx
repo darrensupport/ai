@@ -217,7 +217,7 @@ function PureMultimodalInput({
   }, [status, scrollToBottom]);
 
   return (
-    <div className="relative w-full flex flex-col gap-4">
+    <div className="relative w-full flex flex-col gap-4 min-w-0 overflow-hidden">
       <AnimatePresence>
         {isHydrated && !isAtBottom && messages.length > 0 && (
           <motion.div
