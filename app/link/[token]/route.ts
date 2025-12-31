@@ -39,6 +39,10 @@ export async function GET(
     // Redirect to chat with the content pre-populated
     redirect(`/?query=${encodeURIComponent(content)}`);
   } catch (error) {
+    // Re-throw Next.js redirect errors
+    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
+      throw error;
+    }
     console.error('Link retrieval failed:', error);
     redirect('/?error=link_invalid');
   }
