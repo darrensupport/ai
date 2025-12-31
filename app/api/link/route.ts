@@ -48,7 +48,9 @@ export async function POST(request: Request) {
     await redis.set(`link:${id}`, encrypted, { ex: ttlSeconds });
 
     // Build the redirect URL
-    const baseUrl = process.env.NEXTAUTH_URL || request.headers.get('origin') || '';
+    // Priority: NEXTAUTH_URL > origin header > x-forwarded-host (Cloud Run)
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const baseUrl = process.env.NEXTAUTH_URL || request.headers.get('origin') || (forwardedHost ? `https://${forwardedHost}` : '');
     const url = `${baseUrl}/link/${id}`;
     const expiresAt = new Date(Date.now() + ttlSeconds * 1000);
 
