@@ -1,4 +1,4 @@
-import { redirect } from 'next/navigation';
+import { NextResponse } from 'next/server';
 import { Redis } from '@upstash/redis';
 import { createDecipheriv } from 'crypto';
 
@@ -30,20 +30,26 @@ export async function GET(
     const encrypted = await redis.get<string>(`link:${token}`);
 
     if (!encrypted) {
-      redirect('/?error=link_expired');
+      return NextResponse.redirect(new URL('/?error=link_expired', request.url));
     }
 
     // Decrypt content
     const content = decrypt(encrypted);
 
-    // Redirect to chat with the content pre-populated
-    redirect(`/?query=${encodeURIComponent(content)}`);
+    // Set cookie with content and redirect to /
+    // Cookie is HttpOnly, secure, and expires in 60 seconds (just enough for redirect)
+    const response = NextResponse.redirect(new URL('/', request.url));
+    response.cookies.set('shared_link_content', content, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 60, // 60 seconds - just enough for the redirect
+      path: '/',
+    });
+
+    return response;
   } catch (error) {
-    // Re-throw Next.js redirect errors
-    if (error instanceof Error && error.message.includes('NEXT_REDIRECT')) {
-      throw error;
-    }
     console.error('Link retrieval failed:', error);
-    redirect('/?error=link_invalid');
+    return NextResponse.redirect(new URL('/?error=link_invalid', request.url));
   }
 }

@@ -31,6 +31,7 @@ export function Chat({
   isReadonly,
   session,
   autoResume,
+  initialQuery,
 }: {
   id: string;
   initialMessages: ChatMessage[];
@@ -39,6 +40,7 @@ export function Chat({
   isReadonly: boolean;
   session: Session;
   autoResume: boolean;
+  initialQuery?: string;
 }) {
   const { visibilityType } = useChatVisibility({
     chatId: id,
@@ -136,7 +138,9 @@ export function Chat({
   };
 
   const searchParams = useSearchParams();
-  const query = searchParams.get('query');
+  const queryFromUrl = searchParams.get('query');
+  // Use initialQuery prop (from cookie) or fall back to URL query param
+  const query = initialQuery || queryFromUrl;
 
   const [hasAppendedQuery, setHasAppendedQuery] = useState(false);
 
@@ -148,9 +152,15 @@ export function Chat({
       });
 
       setHasAppendedQuery(true);
+
+      // Clear the shared link cookie if it was used
+      if (initialQuery) {
+        document.cookie = 'shared_link_content=; path=/; max-age=0';
+      }
+
       window.history.replaceState({}, '', `/chat/${id}`);
     }
-  }, [query, sendMessage, hasAppendedQuery, id]);
+  }, [query, sendMessage, hasAppendedQuery, id, initialQuery]);
 
   const { data: votes } = useSWR<Array<Vote>>(
     messages.length >= 2 ? `/api/vote?chatId=${id}` : null,
