@@ -17,19 +17,17 @@ export default async function Page() {
   const cookieStore = await cookies();
   const id = generateUUID();
   const modelIdFromCookie = cookieStore.get('chat-model');
-  
-  // Check if this is the first load of the app (no referrer or referrer doesn't indicate internal navigation)
+
+  // Check for shared link content from cookie (set by /link/[token] route)
+  const sharedLinkCookie = cookieStore.get('shared_link_content');
+  const initialQuery = sharedLinkCookie?.value || undefined;
+
+  // Check if this is the first load of the app (no referrer)
+  // If no referrer and no shared link cookie, redirect to home
   const headersList = await headers();
   const referer = headersList.get('referer');
-  
-  // If no referrer or referrer doesn't contain internal routes, this is likely the first load - redirect to home
-  const isInternalNavigation = referer && (
-    referer.includes('/home') || 
-    referer.includes('/chat/') || 
-    referer.includes('/')
-  );
-  
-  if (!isInternalNavigation) {
+
+  if (!referer && !initialQuery) {
     redirect('/home');
   }
 
@@ -45,6 +43,7 @@ export default async function Page() {
           isReadonly={false}
           session={session}
           autoResume={false}
+          initialQuery={initialQuery}
         />
         <DataStreamHandler />
       </>
@@ -62,6 +61,7 @@ export default async function Page() {
         isReadonly={false}
         session={session}
         autoResume={false}
+        initialQuery={initialQuery}
       />
       <DataStreamHandler />
     </>
