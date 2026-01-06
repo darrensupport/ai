@@ -130,16 +130,15 @@ const PurePreviewMessage = ({
                     let parsedData;
                     try {
                       parsedData = JSON.parse(jsonData);
+                      // Remove task/request from displayed JSON since it's shown as the message
+                      delete parsedData.task;
+                      delete parsedData.request;
                     } catch {
                       parsedData = jsonData;
                     }
 
                     return (
                       <div key={key} className="flex flex-col gap-2 items-end w-full">
-                        <CollapsibleWrapper
-                          displayName="Participant data from partner"
-                          output={parsedData}
-                        />
                         {taskText && (
                           <div
                             data-testid="message-content"
@@ -148,6 +147,10 @@ const PurePreviewMessage = ({
                             <Markdown>{sanitizeText(taskText)}</Markdown>
                           </div>
                         )}
+                        <CollapsibleWrapper
+                          displayName="Participant data from partner"
+                          output={parsedData}
+                        />
                       </div>
                     );
                   }
