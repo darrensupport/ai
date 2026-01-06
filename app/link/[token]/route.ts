@@ -19,26 +19,18 @@ function decrypt(encryptedData: string): string {
   return decipher.update(encrypted) + decipher.final('utf8');
 }
 
-// Check if content is valid JSON and wrap with context instructions
+// Check if content is valid JSON and wrap with XML context tags
 function formatContent(content: string): string {
   try {
     const parsed = JSON.parse(content);
-    // It's valid JSON - wrap with context instructions for the agent
-    const jsonStr = JSON.stringify(parsed, null, 2);
-
-    // Extract task/request if present, otherwise use default
     const task = parsed.task || parsed.request || 'Help me apply for benefits using this participant data.';
 
-    return `[PARTNER DATA CONTEXT]
-The following participant data has been pre-loaded from the partner system.
-Use this data directly to populate forms - do not search the database for this participant.
-Treat this data the same as you would treat results from the "get-participant-by-id" tool.
-
-\`\`\`json
-${jsonStr}
-\`\`\`
-[END PARTNER DATA CONTEXT]
-
+    return `<partner_context>
+<participant_data>
+${JSON.stringify(parsed, null, 2)}
+</participant_data>
+<instructions>Use this pre-loaded participant data directly to populate forms. Do not search the database for this participant.</instructions>
+</partner_context>
 ${task}`;
   } catch {
     // Not valid JSON - return as-is (plain text query)

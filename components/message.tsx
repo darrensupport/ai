@@ -121,6 +121,37 @@ const PurePreviewMessage = ({
 
               if (type === 'text') {
                 if (mode === 'view') {
+                  // Check for partner data context in user messages (XML format)
+                  const partnerDataMatch = part.text.match(/<partner_context>[\s\S]*?<participant_data>([\s\S]*?)<\/participant_data>[\s\S]*?<\/partner_context>\s*([\s\S]*)/);
+
+                  if (partnerDataMatch && message.role === 'user') {
+                    const jsonData = partnerDataMatch[1].trim();
+                    const taskText = partnerDataMatch[2].trim();
+                    let parsedData;
+                    try {
+                      parsedData = JSON.parse(jsonData);
+                    } catch {
+                      parsedData = jsonData;
+                    }
+
+                    return (
+                      <div key={key} className="flex flex-col gap-2 items-end w-full">
+                        <CollapsibleWrapper
+                          displayName="Participant data from partner"
+                          output={parsedData}
+                        />
+                        {taskText && (
+                          <div
+                            data-testid="message-content"
+                            className="bg-[#EFD9E9] dark:bg-slate-800 text-black dark:text-slate-100 px-[18px] py-[18px] rounded-xl text-xs leading-[18px] font-inter"
+                          >
+                            <Markdown>{sanitizeText(taskText)}</Markdown>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  }
+
                   return (
                     <div key={key} className="flex flex-row gap-2 items-start">
                       {/* {message.role === 'user' && !isReadonly && (
