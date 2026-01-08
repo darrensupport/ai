@@ -33,6 +33,26 @@ import { Spinner } from './ui/spinner';
 // This ensures the last message has enough space to scroll properly with the header
 const RESPONSIVE_MIN_HEIGHT = 'min-h-[calc(100vh-22rem)] md:min-h-[calc(100vh-24rem)] lg:min-h-[calc(100vh-26rem)]';
 
+// Parse partner data from XML-wrapped content in user messages
+function parsePartnerData(text: string): { participantData: any; taskText: string } | null {
+  const match = text.match(/<partner_context>[\s\S]*?<participant_data>([\s\S]*?)<\/participant_data>[\s\S]*?<\/partner_context>\s*([\s\S]*)/);
+  if (!match) return null;
+
+  const jsonData = match[1].trim();
+  const taskText = match[2].trim();
+
+  let parsedData;
+  try {
+    parsedData = JSON.parse(jsonData);
+    delete parsedData.task;
+    delete parsedData.request;
+  } catch {
+    parsedData = jsonData;
+  }
+
+  return { participantData: parsedData, taskText };
+}
+
 // Type narrowing is handled by TypeScript's control flow analysis
 // The AI SDK provides proper discriminated unions for tool calls
 
@@ -121,35 +141,22 @@ const PurePreviewMessage = ({
 
               if (type === 'text') {
                 if (mode === 'view') {
-                  // Check for partner data context in user messages (XML format)
-                  const partnerDataMatch = part.text.match(/<partner_context>[\s\S]*?<participant_data>([\s\S]*?)<\/participant_data>[\s\S]*?<\/partner_context>\s*([\s\S]*)/);
+                  const partnerData = parsePartnerData(part.text);
 
-                  if (partnerDataMatch && message.role === 'user') {
-                    const jsonData = partnerDataMatch[1].trim();
-                    const taskText = partnerDataMatch[2].trim();
-                    let parsedData;
-                    try {
-                      parsedData = JSON.parse(jsonData);
-                      // Remove task/request from displayed JSON since it's shown as the message
-                      delete parsedData.task;
-                      delete parsedData.request;
-                    } catch {
-                      parsedData = jsonData;
-                    }
-
+                  if (partnerData && message.role === 'user') {
                     return (
                       <div key={key} className="flex flex-col gap-2 items-end w-full">
-                        {taskText && (
+                        {partnerData.taskText && (
                           <div
                             data-testid="message-content"
                             className="bg-[#EFD9E9] dark:bg-slate-800 text-black dark:text-slate-100 px-[18px] py-[18px] rounded-xl text-xs leading-[18px] font-inter"
                           >
-                            <Markdown>{sanitizeText(taskText)}</Markdown>
+                            <Markdown>{sanitizeText(partnerData.taskText)}</Markdown>
                           </div>
                         )}
                         <CollapsibleWrapper
                           displayName="Participant data from partner"
-                          output={parsedData}
+                          output={partnerData.participantData}
                         />
                       </div>
                     );
