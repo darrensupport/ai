@@ -19,6 +19,25 @@ function decrypt(encryptedData: string): string {
   return decipher.update(encrypted) + decipher.final('utf8');
 }
 
+// Check if content is valid JSON and wrap with XML context tags
+function formatContent(content: string): string {
+  try {
+    const parsed = JSON.parse(content);
+    const task = parsed.task || parsed.request || 'Help me apply for benefits using this participant data.';
+
+    return `<partner_context>
+<participant_data>
+${JSON.stringify(parsed, null, 2)}
+</participant_data>
+<instructions>Use this pre-loaded participant data directly to populate forms. Do not search the database for this participant.</instructions>
+</partner_context>
+${task}`;
+  } catch {
+    // Not valid JSON - return as-is (plain text query)
+    return content;
+  }
+}
+
 // Get the base URL for redirects (Cloud Run uses x-forwarded-host)
 function getBaseUrl(request: Request): string {
   const forwardedHost = request.headers.get('x-forwarded-host');
@@ -40,8 +59,9 @@ export async function GET(
       return NextResponse.redirect(new URL('/?error=link_expired', baseUrl));
     }
 
-    // Decrypt content
-    const content = decrypt(encrypted);
+    // Decrypt content and format if JSON
+    const rawContent = decrypt(encrypted);
+    const content = formatContent(rawContent);
 
     // Set cookie with content and redirect to /
     // Cookie is HttpOnly, secure, and expires in 60 seconds (just enough for redirect)
