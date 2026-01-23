@@ -77,12 +77,25 @@ const PurePreviewMessage = ({
   requiresScrollPadding: boolean;
 }) => {
   const [mode, setMode] = useState<'view' | 'edit'>('view');
+  const [dismissedActionConfirmations, setDismissedActionConfirmations] = useState<Set<string>>(new Set());
 
   const attachmentsFromMessage = message.parts.filter(
     (part) => part.type === 'file',
   );
 
   useDataStream();
+
+  // Dismiss all action confirmations when user sends a new message
+  useEffect(() => {
+    const handleNewUserMessage = () => {
+      setDismissedActionConfirmations((prev) => new Set([...prev, message.id]));
+    };
+
+    window.addEventListener('new-user-message', handleNewUserMessage);
+    return () => {
+      window.removeEventListener('new-user-message', handleNewUserMessage);
+    };
+  }, [message.id]);
 
   return (
     <AnimatePresence>
@@ -206,7 +219,7 @@ const PurePreviewMessage = ({
                         </div>
                       </div>
                       
-                      {message.role === 'assistant' && requiresUserAction && !isReadonly && (
+                      {message.role === 'assistant' && requiresUserAction && !isReadonly && !isLoading && !dismissedActionConfirmations.has(message.id) && (
                         <UserActionConfirmation
                           approval={{ id: `action-${message.id}`, approved: undefined }}
                           state="approval-requested"
@@ -221,6 +234,10 @@ const PurePreviewMessage = ({
                               detail: { mode: 'user' } 
                             });
                             window.dispatchEvent(event);
+                          }}
+                          onReject={(approvalId) => {
+                            // Dismiss the confirmation by adding message.id to the dismissed set
+                            setDismissedActionConfirmations((prev) => new Set([...prev, message.id]));
                           }}
                         />
                       )}
