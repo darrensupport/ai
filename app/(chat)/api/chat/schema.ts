@@ -27,6 +27,8 @@ const messageSchema = z.object({
   parts: z.array(z.any()),
 });
 
+const systemPromptIdSchema = z.enum(["dify-rule-ver5"]);
+
 export const postRequestBodySchema = z.object({
   id: z.string().uuid(),
   // Either a single new message or all messages (for tool approvals)
@@ -34,6 +36,7 @@ export const postRequestBodySchema = z.object({
   messages: z.array(messageSchema).optional(),
   selectedChatModel: z.string(),
   selectedVisibilityType: z.enum(["public", "private"]),
+  systemPromptId: systemPromptIdSchema.optional(),
 });
 
 export type PostRequestBody = z.infer<typeof postRequestBodySchema>;

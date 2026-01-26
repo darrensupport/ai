@@ -14,10 +14,12 @@ function PureChatHeader({
   chatId,
   selectedVisibilityType,
   isReadonly,
+  newChatPath,
 }: {
   chatId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  newChatPath?: string;
 }) {
   const router = useRouter();
   const { open } = useSidebar();
@@ -32,7 +34,7 @@ function PureChatHeader({
         <Button
           className="order-2 ml-auto h-8 px-2 md:order-1 md:ml-0 md:h-fit md:px-2"
           onClick={() => {
-            router.push("/");
+            router.push(newChatPath ?? "/");
             router.refresh();
           }}
           variant="outline"
@@ -71,6 +73,7 @@ export const ChatHeader = memo(PureChatHeader, (prevProps, nextProps) => {
   return (
     prevProps.chatId === nextProps.chatId &&
     prevProps.selectedVisibilityType === nextProps.selectedVisibilityType &&
-    prevProps.isReadonly === nextProps.isReadonly
+    prevProps.isReadonly === nextProps.isReadonly &&
+    prevProps.newChatPath === nextProps.newChatPath
   );
 });

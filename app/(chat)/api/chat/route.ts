@@ -59,8 +59,14 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { id, message, messages, selectedChatModel, selectedVisibilityType } =
-      requestBody;
+  const {
+    id,
+    message,
+    messages,
+    selectedChatModel,
+    selectedVisibilityType,
+    systemPromptId,
+  } = requestBody;
 
     const session = await auth();
 
@@ -133,6 +139,8 @@ export async function POST(request: Request) {
     const isReasoningModel =
       selectedChatModel.includes("reasoning") ||
       selectedChatModel.includes("thinking");
+    const isDifyMode = systemPromptId === "dify-rule-ver5";
+    const shouldUseTools = !isReasoningModel && !isDifyMode;
 
     const modelMessages = await convertToModelMessages(uiMessages);
 
@@ -141,17 +149,21 @@ export async function POST(request: Request) {
       execute: async ({ writer: dataStream }) => {
         const result = streamText({
           model: getLanguageModel(selectedChatModel),
-          system: systemPrompt({ selectedChatModel, requestHints }),
+          system: systemPrompt({
+            selectedChatModel,
+            requestHints,
+            systemPromptId,
+          }),
           messages: modelMessages,
           stopWhen: stepCountIs(5),
-          experimental_activeTools: isReasoningModel
-            ? []
-            : [
+          experimental_activeTools: shouldUseTools
+            ? [
                 "getWeather",
                 "createDocument",
                 "updateDocument",
                 "requestSuggestions",
-              ],
+              ]
+            : [],
           providerOptions: isReasoningModel
             ? {
                 anthropic: {
@@ -159,12 +171,14 @@ export async function POST(request: Request) {
                 },
               }
             : undefined,
-          tools: {
-            getWeather,
-            createDocument: createDocument({ session, dataStream }),
-            updateDocument: updateDocument({ session, dataStream }),
-            requestSuggestions: requestSuggestions({ session, dataStream }),
-          },
+          tools: shouldUseTools
+            ? {
+                getWeather,
+                createDocument: createDocument({ session, dataStream }),
+                updateDocument: updateDocument({ session, dataStream }),
+                requestSuggestions: requestSuggestions({ session, dataStream }),
+              }
+            : undefined,
           experimental_telemetry: {
             isEnabled: isProductionEnvironment,
             functionId: "stream-text",

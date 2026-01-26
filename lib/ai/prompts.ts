@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
 import type { Geo } from "@vercel/functions";
 import type { ArtifactKind } from "@/components/artifact";
+
 
 export const artifactsPrompt = `
 Artifacts is a special user interface mode that helps users with writing, editing, and other content creation tasks. When artifact is open, it is on the right side of the screen, while the conversation is on the left side. When creating or updating documents, changes are reflected in real-time on the artifacts and visible to the user.
@@ -41,6 +43,29 @@ export const regularPrompt = `You are a friendly assistant! Keep your responses 
 
 When asked to write, create, or help with something, just do it directly. Don't ask clarifying questions unless absolutely necessary - make reasonable assumptions and proceed with the task.`;
 
+export const systemPromptIds = ["dify-rule-ver5"] as const;
+export type SystemPromptId = (typeof systemPromptIds)[number];
+
+const difyRuleVer5 = (() => {
+  try {
+    return readFileSync(new URL("../../rule_ver5.md", import.meta.url), "utf8");
+  } catch {
+    return "";
+  }
+})();
+
+const difyWorkflowPrompt = (requestPrompt: string) => `You are a Dify workflow DSL assistant.
+
+Follow the rulebook below exactly. Ask clarifying questions as needed and proceed phase by phase.
+When the user confirms the flow, generate the DSL as YAML.
+Output the final DSL as a single fenced code block with language "yaml".
+Do not add extra commentary after the YAML.
+
+${requestPrompt}
+
+Rulebook:
+${difyRuleVer5}`;
+
 export type RequestHints = {
   latitude: Geo["latitude"];
   longitude: Geo["longitude"];
@@ -59,11 +84,17 @@ About the origin of user's request:
 export const systemPrompt = ({
   selectedChatModel,
   requestHints,
+  systemPromptId,
 }: {
   selectedChatModel: string;
   requestHints: RequestHints;
+  systemPromptId?: SystemPromptId;
 }) => {
   const requestPrompt = getRequestPromptFromHints(requestHints);
+
+  if (systemPromptId === "dify-rule-ver5") {
+    return difyWorkflowPrompt(requestPrompt);
+  }
 
   // reasoning models don't need artifacts prompt (they can't use tools)
   if (
