@@ -70,7 +70,7 @@ function LoginContent() {
           <button
             onClick={handleMicrosoftLogin}
             disabled={loadingMethod !== null}
-            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-custom-purple/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
+            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
           >
             <div className="relative shrink-0 size-[13.25px]">
               <MicrosoftLogo size={13.25} className="block max-w-none size-full" />
@@ -86,7 +86,7 @@ function LoginContent() {
           <button
             onClick={handleGoogleLogin}
             disabled={loadingMethod !== null}
-            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-custom-purple/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
+            className="border border-border border-solid box-border content-stretch flex gap-[8px] items-center justify-center min-h-[36px] px-[16px] py-[7.5px] relative rounded-[8px] shrink-0 w-full hover:bg-accent disabled:opacity-50 disabled:cursor-not-allowed transition-colors bg-card"
           >
             <div className="relative shrink-0 size-[13.25px]">
               <GoogleLogo size={13.25} className="block max-w-none size-full" />

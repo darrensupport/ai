@@ -398,6 +398,7 @@ function PureArtifact({
                       sendMessage={sendMessage}
                       setMessages={setMessages}
                       selectedVisibilityType={selectedVisibilityType}
+                      session={session ?? null}
                     />
 
                   </form>
