@@ -1,16 +1,15 @@
 'use client';
 
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { toast } from '@/components/toast';
 import { signIn } from 'next-auth/react';
 import { MicrosoftLogo } from '@/components/icons/MicrosoftLogo';
 import { GoogleLogo } from '@/components/icons/GoogleLogo';
 
-export default function Page() {
+function ErrorHandler() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [loadingMethod, setLoadingMethod] = useState<'microsoft' | 'google' | null>(null);
 
   useEffect(() => {
     const error = searchParams.get('error');
@@ -23,6 +22,12 @@ export default function Page() {
       router.replace('/login', { scroll: false });
     }
   }, [searchParams, router]);
+
+  return null;
+}
+
+function LoginContent() {
+  const [loadingMethod, setLoadingMethod] = useState<'microsoft' | 'google' | null>(null);
 
   const handleGoogleLogin = async () => {
     setLoadingMethod('google');
@@ -95,5 +100,16 @@ export default function Page() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Page() {
+  return (
+    <>
+      <Suspense fallback={null}>
+        <ErrorHandler />
+      </Suspense>
+      <LoginContent />
+    </>
   );
 }
