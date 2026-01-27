@@ -6,6 +6,7 @@ import { NextResponse } from 'next/server';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   let redirectUrl = searchParams.get('redirectUrl') || '/';
+  
   // Fix localhost redirects to use the current host
   if (redirectUrl.includes('localhost:3000')) {
     const currentUrl = new URL(request.url);
