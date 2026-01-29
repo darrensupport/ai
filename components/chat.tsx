@@ -82,7 +82,7 @@ export function Chat({
               body: {
                 messages,
                 threadId: id,
-                resourceId: session.user.id,
+                resourceId: session?.user?.id,
                 ...body,
               },
             })
