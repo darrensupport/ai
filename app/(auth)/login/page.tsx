@@ -1,66 +1,58 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
-import { AuthForm } from "@/components/auth-form";
-import { SubmitButton } from "@/components/submit-button";
-import { toast } from "@/components/toast";
+import { Button } from "@/components/ui/button";
+import { GitIcon, LogoGoogle } from "@/components/icons";
+import { toast } from "sonner";
 
 export default function Page() {
   const router = useRouter();
-  const [email, setEmail] = useState("");
-  const [isSuccessful, setIsSuccessful] = useState(false);
 
-  const handleSubmit = async (formData: FormData) => {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    setEmail(email);
-
-    await authClient.signIn.email(
-      {
-        email,
-        password,
-      },
-      {
-        onSuccess: () => {
-          setIsSuccessful(true);
-          router.push("/");
-          router.refresh();
-        },
-        onError: (ctx) => {
-          toast({
-            type: "error",
-            description: ctx.error.message,
-          });
-        },
-      }
-    );
+  const handleSignIn = async (provider: "google" | "github") => {
+    try {
+      await authClient.signIn.social({
+        provider,
+        callbackURL: "/",
+      });
+    } catch (error) {
+      toast.error("Sign in failed. Please try again.");
+    }
   };
 
   return (
     <div className="flex h-dvh w-screen items-start justify-center bg-background pt-12 md:items-center md:pt-0">
-      <div className="flex w-full max-w-md flex-col gap-12 overflow-hidden rounded-2xl">
-        <div className="flex flex-col items-center justify-center gap-2 px-4 text-center sm:px-16">
-          <h3 className="font-semibold text-xl dark:text-zinc-50">Sign In</h3>
+      <div className="flex w-full max-w-md flex-col gap-12 overflow-hidden rounded-2xl p-4 sm:p-16">
+        <div className="flex flex-col items-center justify-center gap-2 text-center">
+          <h3 className="font-semibold text-2xl dark:text-zinc-50">SelamGPT</h3>
           <p className="text-gray-500 text-sm dark:text-zinc-400">
-            Use your email and password to sign in
+            Sign in to continue
           </p>
         </div>
-        <AuthForm action={handleSubmit} defaultEmail={email}>
-          <SubmitButton isSuccessful={isSuccessful}>Sign in</SubmitButton>
-          <p className="mt-4 text-center text-gray-600 text-sm dark:text-zinc-400">
-            {"Don't have an account? "}
-            <Link
-              className="font-semibold text-gray-800 hover:underline dark:text-zinc-200"
-              href="/register"
-            >
-              Sign up
-            </Link>
-            {" for free."}
-          </p>
-        </AuthForm>
+
+        <div className="flex flex-col gap-4">
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2 h-12 text-base font-medium"
+            onClick={() => handleSignIn("google")}
+          >
+            <LogoGoogle />
+            Continue with Google
+          </Button>
+
+          <Button
+            variant="outline"
+            className="w-full flex items-center gap-2 h-12 text-base font-medium"
+            onClick={() => handleSignIn("github")}
+          >
+            <GitIcon />
+            Continue with GitHub
+          </Button>
+        </div>
+
+        <p className="text-center text-xs text-gray-500 dark:text-zinc-400">
+          By continuing, you agree to our Terms of Service and Privacy Policy.
+        </p>
       </div>
     </div>
   );

@@ -11,8 +11,15 @@ export const auth = betterAuth({
         user: schema.user,
     },
   }),
-  emailAndPassword: {
-    enabled: true,
+  socialProviders: {
+    google: {
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    },
+    github: {
+      clientId: process.env.GITHUB_CLIENT_ID as string,
+      clientSecret: process.env.GITHUB_CLIENT_SECRET as string,
+    },
   },
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: process.env.BETTER_AUTH_URL,
 });
