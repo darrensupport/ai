@@ -55,6 +55,7 @@ export async function createKernelBrowser(
         viewport,
         timeout_seconds: 300, // 5 minutes
         kiosk_mode: true, // Hide URL bar, tabs, and browser chrome in live view
+        stealth: true, // Residential proxy + auto CAPTCHA solver
       })) as KernelBrowser;
 
       console.log(`[Kernel] Browser created: ${browser.session_id}`);

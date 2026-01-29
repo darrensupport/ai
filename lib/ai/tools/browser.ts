@@ -21,13 +21,14 @@ export const createBrowserTool = (sessionId: string) =>
     description: `Execute browser automation commands using agent-browser CLI connected to a remote Kernel browser.
 
 Core workflow:
-1. Use "snapshot" to see the accessibility tree with element refs (@e1, @e2)
+1. Use "snapshot -i" to get interactive elements with refs (@e1, @e2)
 2. Interact using refs: "click @e1", "fill @e2 \\"text\\""
 3. Re-snapshot after navigation or DOM changes
 
 Common commands:
 - "open <url>" - Navigate to URL
-- "snapshot" - Get accessibility tree with refs (ALWAYS do this first after navigation)
+- "snapshot -i" - Get interactive elements with refs (ALWAYS do this first)
+- "snapshot" - Full accessibility tree (when you need page text/structure)
 - "click @e1" - Click element by ref
 - "fill @e1 \\"text\\"" - Clear field and fill with text
 - "type @e1 \\"text\\"" - Type into element (appends)
@@ -42,7 +43,10 @@ Common commands:
 - "get url" - Get current URL
 - "get title" - Get page title
 - "scroll down 500" - Scroll down 500px
-- "screenshot page.png" - Take screenshot`,
+- "screenshot page.png" - Take screenshot
+
+NEVER use "eval" to enable disabled buttons, bypass validation, or modify page state.
+eval is only acceptable for reading values (e.g. checking if an element exists).`,
     inputSchema: z.object({
       command: z.string().describe('The agent-browser command to execute'),
     }),
@@ -57,7 +61,7 @@ Common commands:
         console.log('[browser-tool] CDP URL:', cdpUrl);
 
         // Use --cdp flag to connect agent-browser to Kernel's browser via CDP WebSocket
-        const fullCommand = `npx agent-browser --cdp "${cdpUrl}" ${command}`;
+        const fullCommand = `npx agent-browser --cdp "${cdpUrl}" --timeout 3000 ${command}`;
         console.log('[browser-tool] Executing:', fullCommand);
 
         const { stdout, stderr } = await execAsync(fullCommand, {

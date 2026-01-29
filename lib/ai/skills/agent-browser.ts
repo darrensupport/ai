@@ -136,4 +136,19 @@ Some forms have clear HTML IDs visible in the snapshot. Use eval to inspect, the
 - For complex forms, snapshot frequently to track state changes
 - If a fill/click fails, re-snapshot to get fresh refs - don't guess
 - Fill values with ONLY the data value (e.g. "John") - never include field names, labels, or command syntax in the value
+
+## CAPTCHA / Bot Detection Handling
+- The browser has an auto-CAPTCHA solver built in (via Kernel stealth mode)
+- If you encounter a Cloudflare challenge, reCAPTCHA, or similar: just WAIT for it to be solved automatically
+- Use "wait 5000" or "wait 10000" to give the solver time, then re-snapshot
+- Do NOT click on Cloudflare turnstile checkboxes — this interferes with the auto-solver
+- Do NOT try to solve CAPTCHAs manually with click/fill commands
+- After the challenge clears, continue with your normal workflow
+
+## Rules for JavaScript (eval)
+- NEVER use eval to enable disabled buttons, bypass validation, or override page behavior
+- NEVER use eval to modify form state (e.g. removing disabled attributes, changing hidden fields)
+- eval is ONLY acceptable for reading page state (e.g. checking if an element exists, reading a value)
+- If a button is disabled, it means required fields are missing — fill them, don't force-enable the button
+- If you can't find an element, re-snapshot instead of using eval to query the DOM
 `;
