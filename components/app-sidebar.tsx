@@ -9,8 +9,8 @@ import {
   Sun,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import type { User } from "next-auth";
 import { useTheme } from "next-themes";
+import type { User } from "better-auth";
 
 import { SidebarHistory } from "@/components/sidebar-history";
 import { Button } from "@/components/ui/button";

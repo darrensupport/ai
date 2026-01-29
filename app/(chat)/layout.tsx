@@ -3,7 +3,8 @@ import { Suspense } from "react";
 import { AppSidebar } from "@/components/app-sidebar";
 import { DataStreamProvider } from "@/components/data-stream-provider";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { auth } from "../(auth)/auth";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
@@ -22,7 +23,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 }
 
 async function SidebarWrapper({ children }: { children: React.ReactNode }) {
-  const [session] = await Promise.all([auth()]);
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   return (
     <SidebarProvider defaultOpen={false}>

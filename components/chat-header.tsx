@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "next-auth/react";
 import { memo } from "react";
 import { SidebarToggle } from "@/components/sidebar-toggle";
 import { SidebarUserNav } from "@/components/sidebar-user-nav";
 import { Button } from "@/components/ui/button";
+import { authClient } from "@/lib/auth-client";
 import { VisibilitySelector, type VisibilityType } from "./visibility-selector";
 
 function PureChatHeader({
@@ -17,7 +17,7 @@ function PureChatHeader({
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
 }) {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
 
   return (
     <header className="absolute top-0 right-0 left-0 p-4 flex items-center gap-4 z-10 justify-between pointer-events-none">

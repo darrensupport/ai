@@ -9,7 +9,7 @@ import {
 } from "ai";
 import { after } from "next/server";
 import { createResumableStreamContext } from "resumable-stream";
-import { auth, type UserType } from "@/app/(auth)/auth";
+import { auth } from "@/lib/auth";
 import { entitlementsByUserType } from "@/lib/ai/entitlements";
 import { type RequestHints, systemPrompt } from "@/lib/ai/prompts";
 import { getLanguageModel } from "@/lib/ai/providers";
@@ -35,6 +35,7 @@ import type { ChatMessage } from "@/lib/types";
 import { convertToUIMessages, generateUUID } from "@/lib/utils";
 import { generateTitleFromUserMessage } from "../../actions";
 import { type PostRequestBody, postRequestBodySchema } from "./schema";
+import { headers } from "next/headers";
 
 export const maxDuration = 60;
 
@@ -62,13 +63,16 @@ export async function POST(request: Request) {
     const { id, message, messages, selectedChatModel, selectedVisibilityType } =
       requestBody;
 
-    const session = await auth();
+    const session = await auth.api.getSession({
+        headers: await headers(),
+    });
 
     if (!session?.user) {
       return new ChatSDKError("unauthorized:chat").toResponse();
     }
 
-    const userType: UserType = session.user.type;
+    // TODO: better-auth user type handling or assume regular
+    const userType = "regular"; // Defaulting for now as better-auth doesn't have custom types yet
 
     const messageCount = await getMessageCountByUserId({
       id: session.user.id,
@@ -270,7 +274,9 @@ export async function DELETE(request: Request) {
     return new ChatSDKError("bad_request:api").toResponse();
   }
 
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
     return new ChatSDKError("unauthorized:chat").toResponse();

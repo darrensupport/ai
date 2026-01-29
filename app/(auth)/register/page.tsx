@@ -2,51 +2,40 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useSession } from "next-auth/react";
-import { useActionState, useEffect, useState } from "react";
+import { useState } from "react";
+import { authClient } from "@/lib/auth-client";
 import { AuthForm } from "@/components/auth-form";
 import { SubmitButton } from "@/components/submit-button";
 import { toast } from "@/components/toast";
-import { type RegisterActionState, register } from "../actions";
 
 export default function Page() {
   const router = useRouter();
-
   const [email, setEmail] = useState("");
   const [isSuccessful, setIsSuccessful] = useState(false);
 
-  const [state, formAction] = useActionState<RegisterActionState, FormData>(
-    register,
-    {
-      status: "idle",
-    }
-  );
+  const handleSubmit = async (formData: FormData) => {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+    setEmail(email);
 
-  const { update: updateSession } = useSession();
-
-  // biome-ignore lint/correctness/useExhaustiveDependencies: router and updateSession are stable refs
-  useEffect(() => {
-    if (state.status === "user_exists") {
-      toast({ type: "error", description: "Account already exists!" });
-    } else if (state.status === "failed") {
-      toast({ type: "error", description: "Failed to create account!" });
-    } else if (state.status === "invalid_data") {
-      toast({
-        type: "error",
-        description: "Failed validating your submission!",
-      });
-    } else if (state.status === "success") {
-      toast({ type: "success", description: "Account created successfully!" });
-
-      setIsSuccessful(true);
-      updateSession();
-      router.refresh();
-    }
-  }, [state.status]);
-
-  const handleSubmit = (formData: FormData) => {
-    setEmail(formData.get("email") as string);
-    formAction(formData);
+    await authClient.signUp.email(
+      {
+        email,
+        password,
+        name: email.split("@")[0], // Default name from email
+      },
+      {
+        onSuccess: () => {
+          toast({ type: "success", description: "Account created successfully!" });
+          setIsSuccessful(true);
+          router.push("/");
+          router.refresh();
+        },
+        onError: (ctx) => {
+          toast({ type: "error", description: ctx.error.message });
+        },
+      }
+    );
   };
 
   return (

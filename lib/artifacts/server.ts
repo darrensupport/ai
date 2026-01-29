@@ -1,5 +1,5 @@
 import type { UIMessageStreamWriter } from "ai";
-import type { Session } from "next-auth";
+import type { Session, User } from "better-auth";
 import { codeDocumentHandler } from "@/artifacts/code/server";
 import { sheetDocumentHandler } from "@/artifacts/sheet/server";
 import { textDocumentHandler } from "@/artifacts/text/server";
@@ -16,18 +16,23 @@ export type SaveDocumentProps = {
   userId: string;
 };
 
+export type AuthSession = {
+  session: Session;
+  user: User;
+};
+
 export type CreateDocumentCallbackProps = {
   id: string;
   title: string;
   dataStream: UIMessageStreamWriter<ChatMessage>;
-  session: Session;
+  session: AuthSession;
 };
 
 export type UpdateDocumentCallbackProps = {
   document: Document;
   description: string;
   dataStream: UIMessageStreamWriter<ChatMessage>;
-  session: Session;
+  session: AuthSession;
 };
 
 export type DocumentHandler<T = ArtifactKind> = {

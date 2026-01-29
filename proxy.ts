@@ -1,6 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { getToken } from "next-auth/jwt";
-import { guestRegex, isDevelopmentEnvironment } from "./lib/constants";
+import { auth } from "@/lib/auth";
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -17,24 +16,24 @@ export async function proxy(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await getToken({
-    req: request,
-    secret: process.env.AUTH_SECRET,
-    secureCookie: !isDevelopmentEnvironment,
+  const session = await auth.api.getSession({
+    headers: request.headers,
   });
 
-  if (!token) {
-    const redirectUrl = encodeURIComponent(request.url);
+  if (!session) {
+    if (["/login", "/register"].includes(pathname)) {
+      return NextResponse.next();
+    }
 
-    return NextResponse.redirect(
-      new URL(`/api/auth/guest?redirectUrl=${redirectUrl}`, request.url)
-    );
-  }
-
-  const isGuest = guestRegex.test(token?.email ?? "");
-
-  if (token && !isGuest && ["/login", "/register"].includes(pathname)) {
-    return NextResponse.redirect(new URL("/", request.url));
+    // Redirect to login if accessing protected routes
+    if (pathname === "/" || pathname.startsWith("/chat")) {
+        return NextResponse.redirect(new URL("/login", request.url));
+    }
+  } else {
+    // Redirect to home if logged in and accessing login/register
+    if (["/login", "/register"].includes(pathname)) {
+        return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
   return NextResponse.next();
