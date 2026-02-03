@@ -10,7 +10,7 @@ interface KernelBrowser {
 
 interface KernelBrowserEntry {
   browser: KernelBrowser;
-  createdAt: number;
+  lastAccessedAt: number;
 }
 
 const BROWSER_TTL_MS = 10 * 60 * 1000; // 10 minutes
@@ -34,8 +34,8 @@ const pendingCreations = globalForKernel.kernelPendingCreations;
 function evictStaleBrowsers() {
   const now = Date.now();
   for (const [key, entry] of activeBrowsers) {
-    if (now - entry.createdAt > BROWSER_TTL_MS) {
-      console.log(`[Kernel] Evicting stale browser for session ${key}`);
+    if (now - entry.lastAccessedAt > BROWSER_TTL_MS) {
+      console.log(`[Kernel] Evicting stale browser for session ${key} (idle for ${Math.round((now - entry.lastAccessedAt) / 1000)}s)`);
       activeBrowsers.delete(key);
       kernel.browsers.deleteByID(entry.browser.session_id).catch(() => {});
     }
@@ -52,6 +52,7 @@ export async function createKernelBrowser(
   // Check if browser already exists for this session
   const existing = activeBrowsers.get(sessionId);
   if (existing) {
+    existing.lastAccessedAt = Date.now(); // Refresh TTL on reuse
     console.log(`[Kernel] Reusing existing browser for session ${sessionId}: ${existing.browser.session_id}`);
     return existing.browser;
   }
@@ -83,7 +84,7 @@ export async function createKernelBrowser(
       console.log(`[Kernel] CDP URL: ${browser.cdp_ws_url}`);
       console.log(`[Kernel] Live View: ${browser.browser_live_view_url}`);
 
-      activeBrowsers.set(sessionId, { browser, createdAt: Date.now() });
+      activeBrowsers.set(sessionId, { browser, lastAccessedAt: Date.now() });
       return browser;
     } finally {
       // Always clean up the pending promise
@@ -130,11 +131,21 @@ export async function deleteKernelBrowser(sessionId: string): Promise<void> {
 }
 
 export function getLiveViewUrl(sessionId: string): string | null {
-  return activeBrowsers.get(sessionId)?.browser.browser_live_view_url || null;
+  const entry = activeBrowsers.get(sessionId);
+  if (entry) {
+    entry.lastAccessedAt = Date.now(); // Refresh TTL on access
+    return entry.browser.browser_live_view_url;
+  }
+  return null;
 }
 
 export function getCdpUrl(sessionId: string): string | null {
-  return activeBrowsers.get(sessionId)?.browser.cdp_ws_url || null;
+  const entry = activeBrowsers.get(sessionId);
+  if (entry) {
+    entry.lastAccessedAt = Date.now(); // Refresh TTL on access
+    return entry.browser.cdp_ws_url;
+  }
+  return null;
 }
 
 export function hasActiveBrowser(sessionId: string): boolean {
