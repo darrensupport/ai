@@ -86,18 +86,36 @@ export function KernelBrowserClient({
     }
   }, [sessionId, liveViewUrl]);
 
+  // Keep sessionId in a ref so the beforeunload handler always has the latest value
+  const sessionIdRef = useRef(sessionId);
+  sessionIdRef.current = sessionId;
+
   // Initialize browser on mount
-  // NOTE: We do NOT delete the browser on unmount because:
-  // 1. React StrictMode causes double mount/unmount cycles
-  // 2. The browser should persist for the entire chat session
-  // 3. Kernel browsers auto-delete after timeout (5 min)
-  // 4. The browser tool needs the same browser instance
   useEffect(() => {
-    // Only initialize if we haven't already for this session
     if (initializedSessionRef.current !== sessionId) {
       initBrowser();
     }
   }, [sessionId, initBrowser]);
+
+  // Clean up browser only when the user closes/navigates away from the page
+  useEffect(() => {
+    const handleBeforeUnload = () => {
+      try {
+        const payload = JSON.stringify({ action: 'delete', sessionId: sessionIdRef.current });
+        navigator.sendBeacon(
+          '/api/kernel-browser',
+          new Blob([payload], { type: 'application/json' }),
+        );
+      } catch {
+        // Best-effort cleanup
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, []);
 
   // Listen for control mode switch events from confirmation components
   useEffect(() => {

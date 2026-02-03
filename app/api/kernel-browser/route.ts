@@ -21,6 +21,14 @@ export async function POST(request: Request) {
       );
     }
 
+    // Validate session ownership: sessionId must end with `-{userId}`
+    if (!sessionId.endsWith(`-${session.user.id}`)) {
+      return Response.json(
+        { error: 'Forbidden: session does not belong to user' },
+        { status: 403 }
+      );
+    }
+
     if (action === 'create') {
       const browser = await createKernelBrowser(sessionId, { isMobile });
       return Response.json({
