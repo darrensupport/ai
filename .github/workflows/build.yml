@@ -16,7 +16,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 18   # 建议用 18，兼容性更好
+          node-version: '20.9.0'   # 指定 Node.js 20.9 或更高版本
 
       - name: Install dependencies 
         run: npm install --legacy-peer-deps
