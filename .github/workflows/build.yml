@@ -24,9 +24,6 @@ jobs:
       - name: Build project
         run: npm run build
 
-      - name: Prune dev dependencies
-        run: npm prune --production
-
       - name: Package release
         run: zip -r release.zip .next public package.json package-lock.json node_modules server.js
 
