@@ -3,14 +3,14 @@ name: Build and Release
 on:
   push:
     branches: [ main ]
-  workflow_dispatch:   # 允许在 Actions 页面手动触发
+  workflow_dispatch:
 
 permissions:
-  contents: write   # 关键：允许创建 Release
+  contents: write
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest   # 改成 Windows 环境
 
     steps:
       - name: Checkout code
@@ -19,28 +19,18 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20   # 保持不变
+          node-version: 20
 
-      - name: Install dependencies 
+      - name: Install dependencies
         run: npm install --legacy-peer-deps
-
-      - name: Install SWC binaries
-        run: |
-              npm install @next/swc-win32-x64-msvc --save --legacy-peer-deps
-              npm install @next/swc-wasm-nodejs --save --legacy-peer-deps
-              npm install @next/swc-wasm-web --save --legacy-peer-deps
-
 
       - name: Build project
         run: npm run build
 
       - name: Package release
         run: |
-          mkdir -p release
-          zip -r release/release.zip . \
-            -x "*.git*" \
-            -x "release/*" \
-            -x "*.log"
+          mkdir release
+          powershell Compress-Archive -Path * -DestinationPath release/release.zip -Force
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -49,7 +39,7 @@ jobs:
           path: release/release.zip
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest   # 保持一致
     needs: build
 
     steps:
