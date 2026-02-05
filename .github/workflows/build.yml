@@ -5,9 +5,8 @@ on:
     branches: [ main ]
   workflow_dispatch:   # 允许在 Actions 页面手动触发
 
-# 关键：给 GITHUB_TOKEN 写权限，否则创建 Release 会报 403
 permissions:
-  contents: write
+  contents: write   # 关键：允许创建 Release
 
 jobs:
   build:
@@ -25,13 +24,18 @@ jobs:
       - name: Install dependencies 
         run: npm install --legacy-peer-deps
 
+      - name: Install SWC binaries
+        run: |
+          npm install @next/swc-win32-x64-msvc --save
+          npm install @next/swc-wasm-nodejs --save
+          npm install @next/swc-wasm-web --save
+
       - name: Build project
         run: npm run build
 
       - name: Package release
         run: |
           mkdir -p release
-          # 打包整个项目目录，排除掉不必要的文件夹和文件
           zip -r release/release.zip . \
             -x "*.git*" \
             -x "release/*" \
