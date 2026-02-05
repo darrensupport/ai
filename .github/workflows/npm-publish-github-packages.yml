@@ -16,7 +16,8 @@ jobs:
       - run: npm run build
       - run: npm prune --production
       - run: zip -r release.zip .next public package.json package-lock.json node_modules server.js
-      - uses: actions/upload-artifact@v3
-        with:
-          name: release
-          path: release.zip
+- uses: actions/upload-artifact@v4
+  with:
+    name: release
+    path: release.zip
+
