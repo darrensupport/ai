@@ -5,12 +5,13 @@ on:
     branches: [ main ]
   workflow_dispatch:
 
+# 关键：给 GITHUB_TOKEN 写权限，否则 Release 会报 403
 permissions:
   contents: write
 
 jobs:
   build:
-    runs-on: windows-latest   # 改成 Windows 环境
+    runs-on: windows-latest   # 如果要在 Windows 环境编译，避免 SWC EBADPLATFORM
 
     steps:
       - name: Checkout code
@@ -39,7 +40,7 @@ jobs:
           path: release/release.zip
 
   release:
-    runs-on: windows-latest   # 保持一致
+    runs-on: windows-latest
     needs: build
 
     steps:
