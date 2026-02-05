@@ -26,9 +26,10 @@ jobs:
 
       - name: Install SWC binaries
         run: |
-          npm install @next/swc-win32-x64-msvc --save
-          npm install @next/swc-wasm-nodejs --save
-          npm install @next/swc-wasm-web --save
+              npm install @next/swc-win32-x64-msvc --save --legacy-peer-deps
+              npm install @next/swc-wasm-nodejs --save --legacy-peer-deps
+              npm install @next/swc-wasm-web --save --legacy-peer-deps
+
 
       - name: Build project
         run: npm run build
