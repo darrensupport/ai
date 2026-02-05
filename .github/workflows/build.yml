@@ -16,24 +16,39 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18   # 建议用 18，兼容性更好
 
       - name: Install dependencies 
-        run: npm install --legacy-peer-deps   # 改成 npm install
+        run: npm install --legacy-peer-deps
 
       - name: Build project
         run: npm run build
 
       - name: Package release
-        run: zip -r release.zip .next public package.json package-lock.json node_modules server.js
+        run: |
+          mkdir -p release
+          # 打包整个项目目录，排除掉不需要的文件夹和文件
+          zip -r release/release.zip . \
+            -x "*.git*" \
+            -x "release/*" \
+            -x "*.log"
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: release
-          path: release.zip
+          path: release/release.zip
 
-      # 可选：自动发布到 GitHub Release 页面
+  release:
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: release
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
